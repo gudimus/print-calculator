@@ -361,14 +361,16 @@
             transition: background 0.2s;
             font-size: 13px;
             -webkit-tap-highlight-color: transparent;
+            border: 1px solid transparent;
         }
         
-        .calculation-item:active {
+        .calculation-item:hover {
             background: var(--tg-theme-secondary-bg-color, #f0f0f0);
         }
         
         .calculation-item.active {
             border-left: 3px solid var(--tg-theme-button-color, #2481cc);
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
         }
         
         .calculation-info {
@@ -412,12 +414,16 @@
             color: var(--tg-theme-link-color, #0645ad);
         }
         
+        .calculation-edit:hover {
+            background: rgba(6, 69, 173, 0.1);
+        }
+        
         .calculation-remove {
             color: var(--tg-theme-destructive-text-color, #e53e3e);
         }
         
-        .calculation-edit:active, .calculation-remove:active {
-            background: rgba(0,0,0,0.05);
+        .calculation-remove:hover {
+            background: rgba(229, 62, 62, 0.1);
         }
         
         .field {
@@ -444,6 +450,10 @@
             color: var(--tg-theme-hint-color, #999999);
         }
         
+        .field input.error {
+            border-color: var(--tg-theme-destructive-text-color, #e53e3e);
+        }
+        
         .dropzone {
             border: 2px dashed var(--tg-theme-hint-color, #dddddd);
             border-radius: 12px;
@@ -455,8 +465,9 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        .dropzone:active {
-            background: rgba(0,0,0,0.02);
+        .dropzone:hover {
+            border-color: var(--tg-theme-button-color, #2481cc);
+            background: rgba(36, 129, 204, 0.05);
         }
         
         .dropzone-content {
@@ -477,6 +488,7 @@
             border-radius: 8px;
             margin-bottom: 6px;
             font-size: 12px;
+            border: 1px solid var(--tg-theme-hint-color, #dddddd);
         }
         
         .file-remove {
@@ -486,6 +498,11 @@
             font-size: 16px;
             padding: 0 4px;
             -webkit-tap-highlight-color: transparent;
+        }
+        
+        .file-remove:hover {
+            background: rgba(229, 62, 62, 0.1);
+            border-radius: 4px;
         }
         
         .progress {
@@ -526,6 +543,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 14px;
+            border: 1px solid #c3e6cb;
         }
         
         .alert button {
@@ -536,6 +554,11 @@
             color: #155724;
             padding: 0 4px;
             -webkit-tap-highlight-color: transparent;
+        }
+        
+        .alert button:hover {
+            background: rgba(0,0,0,0.05);
+            border-radius: 4px;
         }
         
         .total-block {
@@ -563,6 +586,17 @@
         .mb20 { margin-bottom: 16px; }
         .text-center { text-align: center; }
         .hidden { display: none; }
+        
+        /* Отладка */
+        .debug-info {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            display: none;
+        }
         
         /* Адаптация для узких экранов */
         @media (max-width: 400px) {
@@ -611,6 +645,9 @@
     <div class="container">
         <h1>🖨️ Калькулятор печати</h1>
         <div class="subtitle">Широкоформатная и УФ-печать</div>
+        
+        <!-- Отладочная информация (будет видна только при ошибках) -->
+        <div class="debug-info" id="debugInfo"></div>
         
         <div class="progress" id="loadingIndicator">
             <div class="progress-bar"></div>
@@ -784,6 +821,40 @@
 
     <script>
         // ============================================
+        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (ОПРЕДЕЛЕНЫ ДО ИСПОЛЬЗОВАНИЯ)
+        // ============================================
+        
+        // Функция генерации ID - определена первой!
+        function generateId() {
+            return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        function formatNumber(num) {
+            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+        
+        function showNotification(message, type = 'info') {
+            if (window.TelegramWebApp) {
+                window.TelegramWebApp.showPopup({
+                    title: type === 'success' ? '✅ Успешно' : 'ℹ️ Информация',
+                    message: message,
+                    buttons: [{ type: 'ok' }]
+                });
+            } else {
+                alert(message);
+            }
+        }
+        
+        function showDebug(message) {
+            const debugEl = document.getElementById('debugInfo');
+            if (debugEl) {
+                debugEl.style.display = 'block';
+                debugEl.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+                console.log('🐛 DEBUG:', message);
+            }
+        }
+        
+        // ============================================
         // ИНИЦИАЛИЗАЦИЯ MAX BRIDGE
         // ============================================
         let WebApp = null;
@@ -794,11 +865,14 @@
                 WebApp.ready();
                 WebApp.expand();
                 console.log('✅ MAX Bridge инициализирован');
+                showDebug('MAX Bridge инициализирован');
             } else {
                 console.log('ℹ️ Приложение запущено вне MAX');
+                showDebug('Режим отладки (вне MAX)');
             }
         } catch (e) {
             console.warn('⚠️ Ошибка инициализации MAX Bridge:', e);
+            showDebug('Ошибка MAX Bridge: ' + e.message);
         }
         
         // ============================================
@@ -855,34 +929,10 @@
         const MIN_PRICE_UV = PRICE_DATA.settings.min_price_uv || 800;
         
         // ============================================
-        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-        // ============================================
-        
-        function formatNumber(num) {
-            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        }
-        
-        function generateId() {
-            return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-        }
-        
-        function showNotification(message, type = 'info') {
-            if (WebApp) {
-                WebApp.showPopup({
-                    title: type === 'success' ? '✅ Успешно' : 'ℹ️ Информация',
-                    message: message,
-                    buttons: [{ type: 'ok' }]
-                });
-            } else {
-                alert(message);
-            }
-        }
-        
-        // ============================================
         // ОБРАБОТЧИКИ ДЛЯ ИНКРЕМЕНТА/ДЕКРЕМЕНТА
         // ============================================
         
-        function incrementValue(id) {
+        window.incrementValue = function(id) {
             const input = document.getElementById(id);
             if (input) {
                 const max = parseFloat(input.max) || Infinity;
@@ -892,9 +942,9 @@
                 input.value = newValue;
                 updateCurrentSums();
             }
-        }
+        };
         
-        function decrementValue(id) {
+        window.decrementValue = function(id) {
             const input = document.getElementById(id);
             if (input) {
                 const min = parseFloat(input.min) || 0;
@@ -904,7 +954,7 @@
                 input.value = newValue;
                 updateCurrentSums();
             }
-        }
+        };
         
         // ============================================
         // ЗАГРУЗКА ДАННЫХ
@@ -953,6 +1003,7 @@
                 }
             }
             
+            showDebug('Материалы загружены: WF=' + wfMaterials.length + ', UV=' + uvMaterials.length);
             setupMaterialSelectHandlers();
         }
         
@@ -1024,6 +1075,8 @@
                     uvServicesList.appendChild(label);
                 });
             }
+            
+            showDebug('Услуги загружены');
         }
         
         function setupMaterialSelectHandlers() {
@@ -1164,12 +1217,15 @@
         // ============================================
         
         function addCalculation(tab) {
+            showDebug(`addCalculation вызван для ${tab}`);
+            
             const width = document.getElementById(`${tab}_width`).value;
             const height = document.getElementById(`${tab}_height`).value;
             const qty = document.getElementById(`${tab}_qty`).value;
             const materialElement = document.querySelector(`#${tab}_materialSelect .option.selected`);
             
             if (!materialElement) {
+                showDebug('Ошибка: материал не выбран');
                 showNotification('Выберите материал');
                 return;
             }
@@ -1190,7 +1246,7 @@
             const sum = calculatePrice(tab);
             
             const calculation = {
-                id: generateId(),
+                id: generateId(), // generateId уже определена выше
                 tab: tab,
                 width: width,
                 height: height,
@@ -1202,16 +1258,20 @@
                 timestamp: new Date().toLocaleString()
             };
             
+            showDebug('Создан расчет: ' + JSON.stringify(calculation));
+            
             if (editMode && editCalculationId) {
                 const index = calculations.findIndex(c => c.id === editCalculationId);
                 if (index !== -1) {
                     calculations[index] = { ...calculation, id: editCalculationId };
+                    showDebug('Расчет обновлен');
                 }
                 editMode = false;
                 editCalculationId = null;
                 document.getElementById(`${tab}_addBtn`).textContent = '➕ Добавить';
             } else {
                 calculations.push(calculation);
+                showDebug('Расчет добавлен. Всего расчетов: ' + calculations.length);
             }
             
             updateCalculationsList();
@@ -1232,11 +1292,17 @@
             });
             
             updateCurrentSums();
+            showDebug('Форма очищена');
         }
         
-        function editCalculation(id) {
+        window.editCalculation = function(id) {
+            showDebug('Редактирование расчета: ' + id);
+            
             const calculation = calculations.find(c => c.id === id);
-            if (!calculation) return;
+            if (!calculation) {
+                showDebug('Расчет не найден');
+                return;
+            }
             
             const tab = calculation.tab;
             
@@ -1275,10 +1341,13 @@
             editMode = true;
             editCalculationId = id;
             document.getElementById(`${tab}_addBtn`).textContent = '💾 Сохранить';
-        }
+            
+            showDebug('Режим редактирования активирован');
+        };
         
-        function removeCalculation(id) {
+        window.removeCalculation = function(id) {
             if (confirm('Удалить этот расчет?')) {
+                showDebug('Удаление расчета: ' + id);
                 calculations = calculations.filter(c => c.id !== id);
                 updateCalculationsList();
                 checkButtonsState();
@@ -1289,8 +1358,10 @@
                     const activeTab = document.querySelector('.tab.active').dataset.tab;
                     document.getElementById(`${activeTab}_addBtn`).textContent = '➕ Добавить';
                 }
+                
+                showDebug('Расчет удален');
             }
-        }
+        };
         
         function updateCalculationsList() {
             const container = document.getElementById('calculationsContainer');
@@ -1330,16 +1401,36 @@
             } else {
                 document.getElementById('discountBadge').style.display = 'none';
             }
+            
+            showDebug('Список расчетов обновлен. Всего: ' + calculations.length);
         }
         
         function checkButtonsState() {
             const orderBtn = document.getElementById('orderBtn');
             const hasCalculations = calculations.length > 0;
-            const hasName = document.getElementById('name').value.trim() !== '';
-            const hasPhone = document.getElementById('phone').value.trim() !== '';
+            const nameInput = document.getElementById('name');
+            const phoneInput = document.getElementById('phone');
+            
+            const hasName = nameInput.value.trim() !== '';
+            const hasPhone = phoneInput.value.trim() !== '';
+            
+            // Визуальная индикация ошибок
+            if (!hasName && nameInput.value.trim() !== '') {
+                nameInput.classList.add('error');
+            } else {
+                nameInput.classList.remove('error');
+            }
+            
+            if (!hasPhone && phoneInput.value.trim() !== '') {
+                phoneInput.classList.add('error');
+            } else {
+                phoneInput.classList.remove('error');
+            }
             
             if (orderBtn) {
-                orderBtn.disabled = !(hasCalculations && hasName && hasPhone);
+                const enabled = hasCalculations && hasName && hasPhone;
+                orderBtn.disabled = !enabled;
+                showDebug(`Кнопка заказа ${enabled ? 'активна' : 'неактивна'}`);
             }
         }
         
@@ -1361,6 +1452,7 @@
                     });
                     
                     document.getElementById(`tab-${tabName}`).classList.add('active');
+                    showDebug('Переключен таб: ' + tabName);
                 });
             });
         }
@@ -1401,11 +1493,31 @@
                         handleFiles(fileInput.files);
                     }
                 });
+                
+                // Drag & drop
+                dropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropzone.style.borderColor = 'var(--tg-theme-button-color, #2481cc)';
+                });
+                
+                dropzone.addEventListener('dragleave', () => {
+                    dropzone.style.borderColor = 'var(--tg-theme-hint-color, #dddddd)';
+                });
+                
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.style.borderColor = 'var(--tg-theme-hint-color, #dddddd)';
+                    
+                    if (e.dataTransfer.files.length > 0) {
+                        handleFiles(e.dataTransfer.files);
+                    }
+                });
             }
             
             function handleFiles(newFiles) {
                 files = [...files, ...Array.from(newFiles)];
                 updateFileList();
+                showDebug(`Добавлено файлов: ${newFiles.length}`);
                 showNotification(`Добавлено ${newFiles.length} файлов`, 'success');
             }
             
@@ -1433,6 +1545,7 @@
             window.removeFile = function(index) {
                 files.splice(index, 1);
                 updateFileList();
+                showDebug('Файл удален');
             };
         }
         
@@ -1451,39 +1564,35 @@
                         return;
                     }
                     
+                    if (value.length > 11) value = value.slice(0, 11);
+                    
+                    let formatted = '+7 ';
+                    
+                    if (value.startsWith('7') || value.startsWith('8')) {
+                        value = value.slice(1);
+                    }
+                    
                     if (value.length > 0) {
-                        if (value.length > 11) value = value.slice(0, 11);
-                        
-                        let formatted = '';
-                        
-                        if (value.startsWith('7') || value.startsWith('8')) {
-                            formatted = '+7 ';
-                            value = value.slice(1);
-                        } else {
-                            formatted = '+7 ';
-                        }
-                        
-                        if (value.length > 0) {
-                            formatted += '(' + value.slice(0, 3);
-                            if (value.length > 3) {
-                                formatted += ') ' + value.slice(3, 6);
-                                if (value.length > 6) {
-                                    formatted += '-' + value.slice(6, 8);
-                                    if (value.length > 8) {
-                                        formatted += '-' + value.slice(8, 10);
-                                    }
+                        formatted += '(' + value.slice(0, 3);
+                        if (value.length > 3) {
+                            formatted += ') ' + value.slice(3, 6);
+                            if (value.length > 6) {
+                                formatted += '-' + value.slice(6, 8);
+                                if (value.length > 8) {
+                                    formatted += '-' + value.slice(8, 10);
                                 }
                             }
                         }
-                        
-                        e.target.value = formatted;
                     }
+                    
+                    e.target.value = formatted;
+                    checkButtonsState();
                 });
             }
         }
         
         // ============================================
-        // КНОПКА ЗАКАЗА (с отправкой в чат)
+        // КНОПКА ЗАКАЗА
         // ============================================
         
         function setupOrderButton() {
@@ -1494,8 +1603,15 @@
                     const name = document.getElementById('name').value.trim();
                     const phone = document.getElementById('phone').value.trim();
                     
+                    showDebug('Отправка заказа: имя=' + name + ', телефон=' + phone);
+                    
                     if (!name || !phone) {
                         showNotification('Заполните имя и телефон');
+                        return;
+                    }
+                    
+                    if (calculations.length === 0) {
+                        showNotification('Добавьте хотя бы один расчет');
                         return;
                     }
                     
@@ -1528,17 +1644,17 @@
                         date: new Date().toLocaleString()
                     };
                     
+                    showDebug('Данные заказа: ' + JSON.stringify(orderData));
+                    
                     // Показываем прогресс
                     const progress = document.getElementById('progress');
                     if (progress) progress.style.display = 'block';
                     
-                    // Отправляем данные боту (работает ТОЛЬКО внутри MAX)
+                    // Отправляем данные боту
                     if (WebApp) {
                         try {
-                            // Отправляем данные в чат с ботом
                             WebApp.sendData(JSON.stringify(orderData));
                             
-                            // Показываем успех
                             setTimeout(() => {
                                 if (progress) progress.style.display = 'none';
                                 
@@ -1550,7 +1666,7 @@
                                     }, 5000);
                                 }
                                 
-                                // Очищаем форму после успешной отправки
+                                // Очищаем форму
                                 calculations = [];
                                 files = [];
                                 document.getElementById('name').value = '';
@@ -1560,17 +1676,20 @@
                                 checkButtonsState();
                                 
                                 showNotification('Заказ отправлен! Проверьте чат с ботом', 'success');
+                                showDebug('Заказ успешно отправлен в MAX');
                             }, 1000);
                             
                         } catch (error) {
                             console.error('Ошибка отправки:', error);
                             if (progress) progress.style.display = 'none';
+                            showDebug('Ошибка отправки: ' + error.message);
                             showNotification('Ошибка при отправке заказа', 'error');
                         }
                     } else {
                         // Режим отладки вне MAX
                         if (progress) progress.style.display = 'none';
                         console.log('📦 Данные заказа (вне MAX):', orderData);
+                        showDebug('Режим отладки: заказ в консоли');
                         alert('В режиме отладки заказ выведен в консоль\n\n' + JSON.stringify(orderData, null, 2));
                     }
                 });
@@ -1582,16 +1701,38 @@
         // ============================================
         
         document.addEventListener('DOMContentLoaded', () => {
+            showDebug('DOM загружен, начинаем инициализацию');
+            
             const loadingIndicator = document.getElementById('loadingIndicator');
             if (loadingIndicator) loadingIndicator.style.display = 'block';
             
+            // Загружаем данные
             populateMaterialSelects();
             populateServices();
+            
+            // Настраиваем обработчики
             setupTabs();
             setupHistory();
             setupFileHandlers();
             setupPhoneMask();
-            setupOrderButton(); // Новая функция с отправкой в чат
+            setupOrderButton();
+            
+            // Добавляем обработчики для кнопок добавления
+            const wfAddBtn = document.getElementById('wf_addBtn');
+            if (wfAddBtn) {
+                wfAddBtn.addEventListener('click', () => {
+                    showDebug('Клик по кнопке Добавить (WF)');
+                    addCalculation('wf');
+                });
+            }
+            
+            const uvAddBtn = document.getElementById('uv_addBtn');
+            if (uvAddBtn) {
+                uvAddBtn.addEventListener('click', () => {
+                    showDebug('Клик по кнопке Добавить (UV)');
+                    addCalculation('uv');
+                });
+            }
             
             // Обработчики для полей
             ['wf_width', 'wf_height', 'wf_qty', 'uv_width', 'uv_height', 'uv_qty', 'name', 'phone'].forEach(id => {
@@ -1606,12 +1747,15 @@
                 }
             });
             
+            // Обновляем суммы
             updateCurrentSums();
             updateCalculationsList();
             checkButtonsState();
             
+            // Скрываем загрузку
             setTimeout(() => {
                 if (loadingIndicator) loadingIndicator.style.display = 'none';
+                showDebug('Инициализация завершена');
             }, 500);
             
             // Приветственное сообщение
