@@ -30,12 +30,11 @@
             font-size: 24px;
             font-weight: 600;
             margin-bottom: 4px;
-            color: var(--tg-theme-text-color, #000000);
         }
         
         .subtitle {
             font-size: 14px;
-            color: var(--tg-theme-hint-color, #999999);
+            color: #666;
             margin-bottom: 16px;
         }
         
@@ -43,7 +42,7 @@
             display: flex;
             gap: 8px;
             margin-bottom: 16px;
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            background: #f0f0f0;
             padding: 4px;
             border-radius: 10px;
         }
@@ -54,16 +53,14 @@
             padding: 10px;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
             font-size: 14px;
-            color: var(--tg-theme-hint-color, #999999);
+            color: #666;
         }
         
         .tab.active {
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: #ffffff;
+            color: #000000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .tab-content {
@@ -75,7 +72,7 @@
         }
         
         .card {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            background: #f5f5f5;
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 16px;
@@ -94,8 +91,8 @@
         .number-input {
             display: flex;
             align-items: center;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            background: #ffffff;
+            border: 1px solid #ddd;
             border-radius: 10px;
             overflow: hidden;
             height: 44px;
@@ -107,11 +104,8 @@
             border: none;
             background: transparent;
             font-size: 20px;
-            font-weight: 500;
             cursor: pointer;
-            color: var(--tg-theme-button-color, #2481cc);
-            transition: background 0.2s;
-            flex-shrink: 0;
+            color: #2481cc;
         }
         
         .number-input button:active {
@@ -124,16 +118,7 @@
             border: none;
             text-align: center;
             font-size: 16px;
-            background: transparent;
-            color: var(--tg-theme-text-color, #000000);
-            -moz-appearance: textfield;
             outline: none;
-        }
-        
-        .number-input input::-webkit-outer-spin-button,
-        .number-input input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
         }
         
         .select {
@@ -146,26 +131,19 @@
             width: 100%;
             height: 48px;
             padding: 0 16px;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            background: #ffffff;
+            border: 1px solid #ddd;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            font-size: 15px;
-            color: var(--tg-theme-text-color, #000000);
         }
         
         .select-trigger::after {
             content: '▼';
             font-size: 12px;
-            color: var(--tg-theme-hint-color, #999999);
-            transition: transform 0.2s;
-        }
-        
-        .select.open .select-trigger::after {
-            transform: rotate(180deg);
+            color: #999;
         }
         
         .select-options {
@@ -174,14 +152,13 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            background: #ffffff;
+            border: 1px solid #ddd;
             border-radius: 10px;
             margin-top: 4px;
             max-height: 250px;
             overflow-y: auto;
             z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .select.open .select-options {
@@ -191,21 +168,15 @@
         .option {
             padding: 12px 16px;
             cursor: pointer;
-            transition: background 0.2s;
-            font-size: 14px;
-            border-bottom: 1px solid var(--tg-theme-hint-color, #eeeeee);
+            border-bottom: 1px solid #eee;
         }
         
         .option:last-child {
             border-bottom: none;
         }
         
-        .option:hover {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-        }
-        
         .option.selected {
-            background: var(--tg-theme-button-color, #2481cc);
+            background: #2481cc;
             color: white;
         }
         
@@ -220,21 +191,18 @@
         .service-switch {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
             padding: 8px 12px;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            background: #ffffff;
+            border: 1px solid #ddd;
             border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s;
             font-size: 13px;
-            user-select: none;
         }
         
         .service-switch.active {
-            background: var(--tg-theme-button-color, #2481cc);
-            border-color: var(--tg-theme-button-color, #2481cc);
+            background: #2481cc;
             color: white;
+            border-color: #2481cc;
         }
         
         .service-switch input {
@@ -257,20 +225,16 @@
         .current-sum {
             font-size: 28px;
             font-weight: 600;
-            color: var(--tg-theme-text-color, #000000);
         }
         
         .button {
             padding: 10px 20px;
-            background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            background: #2481cc;
+            color: white;
             border: none;
             border-radius: 10px;
             font-size: 15px;
-            font-weight: 500;
             cursor: pointer;
-            transition: opacity 0.2s;
-            min-width: 100px;
         }
         
         .button:active {
@@ -289,7 +253,7 @@
         }
         
         .history-section {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            background: #f5f5f5;
             border-radius: 16px;
             overflow: hidden;
             margin-bottom: 16px;
@@ -301,14 +265,12 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
         }
         
         .history-total {
             display: flex;
             align-items: center;
             gap: 10px;
-            flex-wrap: wrap;
         }
         
         .history-total-sum {
@@ -317,7 +279,7 @@
         }
         
         .discount-badge {
-            background: var(--tg-theme-destructive-text-color, #e53e3e);
+            background: #e53e3e;
             color: white;
             padding: 4px 8px;
             border-radius: 12px;
@@ -325,13 +287,7 @@
         }
         
         .history-arrow {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             transition: transform 0.3s;
-            font-size: 14px;
         }
         
         .history-arrow.open {
@@ -341,7 +297,7 @@
         .history-content {
             display: none;
             padding: 16px;
-            border-top: 1px solid var(--tg-theme-hint-color, #dddddd);
+            border-top: 1px solid #ddd;
         }
         
         .history-content.open {
@@ -353,10 +309,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px;
-            background: var(--tg-theme-bg-color, #ffffff);
+            background: #ffffff;
             border-radius: 10px;
             margin-bottom: 8px;
-            font-size: 13px;
         }
         
         .cart-item-info {
@@ -366,8 +321,7 @@
         }
         
         .cart-item-info small {
-            color: var(--tg-theme-hint-color, #999999);
-            font-size: 11px;
+            color: #999;
         }
         
         .cart-item-actions {
@@ -382,11 +336,6 @@
             background: transparent;
             cursor: pointer;
             font-size: 16px;
-            border-radius: 6px;
-        }
-        
-        .cart-item-actions button:hover {
-            background: rgba(0,0,0,0.05);
         }
         
         .field {
@@ -397,20 +346,15 @@
             width: 100%;
             height: 48px;
             padding: 0 16px;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            background: #ffffff;
+            border: 1px solid #ddd;
             border-radius: 10px;
             font-size: 16px;
-            color: var(--tg-theme-text-color, #000000);
             outline: none;
         }
         
-        .field input:focus {
-            border-color: var(--tg-theme-button-color, #2481cc);
-        }
-        
         .total-block {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            background: #f5f5f5;
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 16px;
@@ -422,7 +366,7 @@
         .total-amount {
             font-size: 24px;
             font-weight: 600;
-            color: var(--tg-theme-button-color, #2481cc);
+            color: #2481cc;
         }
         
         .alert {
@@ -432,13 +376,7 @@
             border-radius: 10px;
             margin-top: 16px;
             display: none;
-            justify-content: space-between;
-            align-items: center;
         }
-        
-        .mt20 { margin-top: 16px; }
-        .text-center { text-align: center; }
-        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -451,23 +389,23 @@
             <div class="tab" data-tab="uv">УФ-печать</div>
         </div>
         
-        <!-- Таб 1: Широкоформатная печать -->
+        <!-- Таб 1: Широкоформатная -->
         <div class="tab-content active" id="tab-wf">
             <div class="card">
                 <div class="input-row">
                     <div class="input-col">
                         <div class="number-input">
-                            <button class="decrement" data-target="wf_width">−</button>
-                            <input type="number" id="wf_width" value="1000" min="100" max="3500" step="10">
-                            <button class="increment" data-target="wf_width">+</button>
+                            <button onclick="changeValue('wf_width', -10)">−</button>
+                            <input type="number" id="wf_width" value="1000" min="100" max="3500" step="10" oninput="calculatePrice('wf')">
+                            <button onclick="changeValue('wf_width', 10)">+</button>
                         </div>
                         <div class="subtitle">Ширина (мм)</div>
                     </div>
                     <div class="input-col">
                         <div class="number-input">
-                            <button class="decrement" data-target="wf_height">−</button>
-                            <input type="number" id="wf_height" value="1000" min="100" max="3500" step="10">
-                            <button class="increment" data-target="wf_height">+</button>
+                            <button onclick="changeValue('wf_height', -10)">−</button>
+                            <input type="number" id="wf_height" value="1000" min="100" max="3500" step="10" oninput="calculatePrice('wf')">
+                            <button onclick="changeValue('wf_height', 10)">+</button>
                         </div>
                         <div class="subtitle">Высота (мм)</div>
                     </div>
@@ -475,9 +413,9 @@
                 <div class="input-row">
                     <div class="input-col">
                         <div class="number-input">
-                            <button class="decrement" data-target="wf_qty">−</button>
-                            <input type="number" id="wf_qty" value="1" min="1" max="1000" step="1">
-                            <button class="increment" data-target="wf_qty">+</button>
+                            <button onclick="changeValue('wf_qty', -1)">−</button>
+                            <input type="number" id="wf_qty" value="1" min="1" max="1000" step="1" oninput="calculatePrice('wf')">
+                            <button onclick="changeValue('wf_qty', 1)">+</button>
                         </div>
                         <div class="subtitle">Тираж</div>
                     </div>
@@ -486,7 +424,7 @@
             
             <div class="card">
                 <div class="select" id="wf_materialSelect">
-                    <div class="select-trigger" id="wf_materialTrigger">
+                    <div class="select-trigger" onclick="toggleSelect('wf')">
                         <span id="wf_selectedMaterial">Загрузка...</span>
                     </div>
                     <div class="select-options" id="wf_materialOptions"></div>
@@ -496,7 +434,7 @@
                 
                 <div class="sum-row">
                     <span class="current-sum" id="wf_sum">0 ₽</span>
-                    <button class="button" id="wf_addBtn">Добавить</button>
+                    <button class="button" id="wf_addBtn" onclick="addToCart('wf')">Добавить</button>
                 </div>
             </div>
         </div>
@@ -507,17 +445,17 @@
                 <div class="input-row">
                     <div class="input-col">
                         <div class="number-input">
-                            <button class="decrement" data-target="uv_width">−</button>
-                            <input type="number" id="uv_width" value="400" min="100" max="3500" step="10">
-                            <button class="increment" data-target="uv_width">+</button>
+                            <button onclick="changeValue('uv_width', -10)">−</button>
+                            <input type="number" id="uv_width" value="400" min="100" max="3500" step="10" oninput="calculatePrice('uv')">
+                            <button onclick="changeValue('uv_width', 10)">+</button>
                         </div>
                         <div class="subtitle">Ширина (мм)</div>
                     </div>
                     <div class="input-col">
                         <div class="number-input">
-                            <button class="decrement" data-target="uv_height">−</button>
-                            <input type="number" id="uv_height" value="600" min="100" max="3500" step="10">
-                            <button class="increment" data-target="uv_height">+</button>
+                            <button onclick="changeValue('uv_height', -10)">−</button>
+                            <input type="number" id="uv_height" value="600" min="100" max="3500" step="10" oninput="calculatePrice('uv')">
+                            <button onclick="changeValue('uv_height', 10)">+</button>
                         </div>
                         <div class="subtitle">Высота (мм)</div>
                     </div>
@@ -525,9 +463,9 @@
                 <div class="input-row">
                     <div class="input-col">
                         <div class="number-input">
-                            <button class="decrement" data-target="uv_qty">−</button>
-                            <input type="number" id="uv_qty" value="1" min="1" max="1000" step="1">
-                            <button class="increment" data-target="uv_qty">+</button>
+                            <button onclick="changeValue('uv_qty', -1)">−</button>
+                            <input type="number" id="uv_qty" value="1" min="1" max="1000" step="1" oninput="calculatePrice('uv')">
+                            <button onclick="changeValue('uv_qty', 1)">+</button>
                         </div>
                         <div class="subtitle">Тираж</div>
                     </div>
@@ -536,7 +474,7 @@
             
             <div class="card">
                 <div class="select" id="uv_materialSelect">
-                    <div class="select-trigger" id="uv_materialTrigger">
+                    <div class="select-trigger" onclick="toggleSelect('uv')">
                         <span id="uv_selectedMaterial">Загрузка...</span>
                     </div>
                     <div class="select-options" id="uv_materialOptions"></div>
@@ -546,14 +484,14 @@
                 
                 <div class="sum-row">
                     <span class="current-sum" id="uv_sum">0 ₽</span>
-                    <button class="button" id="uv_addBtn">Добавить</button>
+                    <button class="button" id="uv_addBtn" onclick="addToCart('uv')">Добавить</button>
                 </div>
             </div>
         </div>
         
         <!-- Корзина -->
         <div class="history-section">
-            <div class="history-header" id="cartHeader">
+            <div class="history-header" onclick="toggleCart()">
                 <div class="history-total">
                     <span class="history-total-sum" id="cartTotal">0 ₽</span>
                     <span class="discount-badge" id="discountBadge" style="display:none;">-10%</span>
@@ -567,33 +505,38 @@
         
         <!-- Итого -->
         <div class="total-block">
-            <span class="total-label">Итого к оплате:</span>
+            <span>Итого к оплате:</span>
             <span class="total-amount" id="finalTotal">0 ₽</span>
         </div>
         
         <!-- Форма -->
         <div class="card">
             <div class="field">
-                <input type="text" id="name" placeholder="Ваше имя *">
+                <input type="text" id="name" placeholder="Ваше имя *" oninput="checkForm()">
             </div>
             <div class="field">
-                <input type="tel" id="phone" placeholder="+7 (___) ___-__-__ *">
+                <input type="tel" id="phone" placeholder="+7 (___) ___-__-__ *" oninput="formatPhone(this); checkForm()">
             </div>
-            <button class="button button-large" id="orderBtn" disabled>Отправить заказ</button>
+            <button class="button button-large" id="orderBtn" disabled onclick="sendOrder()">Отправить заказ</button>
             <div class="alert" id="successMessage">✓ Заказ отправлен! Проверьте чат с ботом.</div>
         </div>
     </div>
 
     <script>
-        // MAX Bridge
+        // MAX Bridge - исправлено для Vercel
         let WebApp = null;
         try {
             if (window.TelegramWebApp) {
                 WebApp = window.TelegramWebApp;
                 WebApp.ready();
                 WebApp.expand();
+                console.log('MAX WebApp инициализирован');
+            } else {
+                console.log('Режим разработки (вне MAX)');
             }
-        } catch (e) {}
+        } catch (e) {
+            console.log('Ошибка инициализации MAX:', e);
+        }
 
         // Данные
         const materials = {
@@ -633,64 +576,49 @@
         let editId = null;
         
         // Инициализация
-        function init() {
-            // Заполняем материалы
+        window.onload = function() {
             fillMaterials('wf');
             fillMaterials('uv');
-            
-            // Заполняем услуги
             fillServices('wf');
             fillServices('uv');
-            
-            // Настраиваем обработчики
-            setupEventListeners();
-            
-            // Обновляем суммы
             calculatePrice('wf');
             calculatePrice('uv');
-        }
+        };
         
         function fillMaterials(type) {
             const options = document.getElementById(type + '_materialOptions');
-            const materialsList = materials[type];
-            
             options.innerHTML = '';
-            materialsList.forEach((m, index) => {
-                const option = document.createElement('div');
-                option.className = 'option' + (index === 0 ? ' selected' : '');
-                option.dataset.price = m.price;
-                option.dataset.type = m.type;
-                option.dataset.name = m.name;
-                option.textContent = m.name;
-                option.onclick = function() {
-                    selectMaterial(type, this);
-                };
-                options.appendChild(option);
+            
+            materials[type].forEach((m, index) => {
+                const div = document.createElement('div');
+                div.className = 'option' + (index === 0 ? ' selected' : '');
+                div.setAttribute('data-price', m.price);
+                div.setAttribute('data-type', m.type);
+                div.setAttribute('data-name', m.name);
+                div.textContent = m.name;
+                div.onclick = function() { selectMaterial(type, this); };
+                options.appendChild(div);
             });
             
-            // Выбираем первый материал
-            if (materialsList.length > 0) {
-                document.getElementById(type + '_selectedMaterial').textContent = materialsList[0].name;
-                updateServices(type, materialsList[0].type);
+            if (materials[type].length > 0) {
+                document.getElementById(type + '_selectedMaterial').textContent = materials[type][0].name;
+                updateServices(type, materials[type][0].type);
             }
         }
         
         function fillServices(type) {
             const container = document.getElementById(type + '_services');
-            const servicesList = services[type];
-            
             container.innerHTML = '';
-            servicesList.forEach(s => {
+            
+            services[type].forEach(s => {
                 const label = document.createElement('label');
                 label.className = 'service-switch';
-                label.dataset.serviceId = s.id;
-                label.dataset.types = s.types.join(',');
+                label.setAttribute('data-types', s.types.join(','));
                 
                 const input = document.createElement('input');
                 input.type = 'checkbox';
-                input.dataset.price = s.price;
-                input.dataset.unit = s.unit;
-                
+                input.setAttribute('data-price', s.price);
+                input.setAttribute('data-unit', s.unit);
                 input.onchange = function() {
                     if (this.checked) {
                         label.classList.add('active');
@@ -707,38 +635,32 @@
         }
         
         function selectMaterial(type, option) {
-            // Обновляем выделение
             document.querySelectorAll('#' + type + '_materialOptions .option').forEach(opt => {
                 opt.classList.remove('selected');
             });
             option.classList.add('selected');
-            
-            // Обновляем текст
             document.getElementById(type + '_selectedMaterial').textContent = option.textContent;
-            
-            // Закрываем селект
             document.getElementById(type + '_materialSelect').classList.remove('open');
             
-            // Обновляем доступные услуги
             updateServices(type, option.dataset.type);
-            
-            // Пересчитываем цену
             calculatePrice(type);
         }
         
         function updateServices(type, materialType) {
-            const services_list = document.querySelectorAll('#' + type + '_services .service-switch');
+            const services = document.querySelectorAll('#' + type + '_services .service-switch');
             
-            services_list.forEach(service => {
+            services.forEach(service => {
                 const types = service.dataset.types.split(',');
                 
                 if (types.includes('all') || types.includes(materialType)) {
-                    service.classList.remove('disabled');
                     service.style.display = 'inline-flex';
+                    const checkbox = service.querySelector('input');
+                    if (checkbox.checked) {
+                        checkbox.checked = false;
+                        service.classList.remove('active');
+                    }
                 } else {
-                    service.classList.add('disabled');
                     service.style.display = 'none';
-                    // Снимаем галочку, если была
                     const checkbox = service.querySelector('input');
                     if (checkbox.checked) {
                         checkbox.checked = false;
@@ -760,7 +682,6 @@
             const area = (width * height) / 1000000;
             let total = materialPrice * area * qty;
             
-            // Добавляем услуги
             document.querySelectorAll('#' + type + '_services input:checked').forEach(cb => {
                 const price = parseFloat(cb.dataset.price) || 0;
                 const unit = cb.dataset.unit;
@@ -777,13 +698,35 @@
                 }
             });
             
-            // Минимальная цена для УФ
-            if (type === 'uv' && total < 800) {
-                total = 800;
-            }
+            if (type === 'uv' && total < 800) total = 800;
             
             document.getElementById(type + '_sum').textContent = Math.round(total) + ' ₽';
         }
+        
+        function changeValue(id, delta) {
+            const input = document.getElementById(id);
+            let val = parseFloat(input.value) || 0;
+            val += delta;
+            
+            const min = parseFloat(input.min) || 0;
+            const max = parseFloat(input.max) || Infinity;
+            
+            if (val < min) val = min;
+            if (val > max) val = max;
+            
+            input.value = val;
+            calculatePrice(id.split('_')[0]);
+        }
+        
+        function toggleSelect(type) {
+            document.getElementById(type + '_materialSelect').classList.toggle('open');
+        }
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.select')) {
+                document.querySelectorAll('.select').forEach(s => s.classList.remove('open'));
+            }
+        });
         
         function addToCart(type) {
             const width = document.getElementById(type + '_width').value;
@@ -796,11 +739,9 @@
             const material = selected.dataset.name;
             const sum = parseFloat(document.getElementById(type + '_sum').textContent);
             
-            // Получаем выбранные услуги
             const selectedServices = [];
             document.querySelectorAll('#' + type + '_services input:checked').forEach(cb => {
-                const label = cb.closest('.service-switch');
-                selectedServices.push(label.textContent.trim());
+                selectedServices.push(cb.parentNode.textContent.trim());
             });
             
             const item = {
@@ -814,7 +755,6 @@
             };
             
             if (editMode && editId) {
-                // Заменяем существующий
                 const index = cart.findIndex(i => i.id == editId);
                 if (index !== -1) {
                     item.id = editId;
@@ -829,13 +769,11 @@
             
             updateCart();
             
-            // Сбрасываем услуги
             document.querySelectorAll('#' + type + '_services input:checked').forEach(cb => {
                 cb.checked = false;
-                cb.closest('.service-switch').classList.remove('active');
+                cb.parentNode.classList.remove('active');
             });
             
-            // Пересчитываем
             calculatePrice(type);
         }
         
@@ -845,35 +783,28 @@
             
             const type = item.type === 'Широкоформатная' ? 'wf' : 'uv';
             
-            // Переключаем таб
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelector('.tab[data-tab="' + type + '"]').classList.add('active');
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById('tab-' + type).classList.add('active');
             
-            // Заполняем поля
             const size = item.size.split('x');
             document.getElementById(type + '_width').value = size[0];
             document.getElementById(type + '_height').value = size[1];
             document.getElementById(type + '_qty').value = item.qty;
             
-            // Выбираем материал
             const options = document.querySelectorAll('#' + type + '_materialOptions .option');
             options.forEach(opt => {
                 if (opt.dataset.name === item.material) {
                     opt.classList.add('selected');
                     document.getElementById(type + '_selectedMaterial').textContent = opt.textContent;
-                    
-                    // Обновляем услуги для этого материала
                     updateServices(type, opt.dataset.type);
                 } else {
                     opt.classList.remove('selected');
                 }
             });
             
-            // Даем время на обновление услуг
             setTimeout(() => {
-                // Выбираем услуги
                 document.querySelectorAll('#' + type + '_services .service-switch').forEach(service => {
                     const cb = service.querySelector('input');
                     const serviceName = service.textContent.trim();
@@ -886,11 +817,9 @@
                         service.classList.remove('active');
                     }
                 });
-                
                 calculatePrice(type);
             }, 50);
             
-            // Включаем режим редактирования
             editMode = true;
             editId = id;
             document.getElementById(type + '_addBtn').textContent = 'Сохранить';
@@ -911,7 +840,6 @@
                 document.getElementById('discountBadge').style.display = 'none';
                 checkForm();
                 
-                // Сбрасываем режим редактирования
                 editMode = false;
                 editId = null;
                 document.querySelectorAll('.sum-row .button').forEach(btn => {
@@ -938,7 +866,6 @@
             
             container.innerHTML = html;
             
-            // Скидка
             let finalTotal = total;
             if (total >= 50000) {
                 finalTotal = total * 0.9;
@@ -976,8 +903,7 @@
         function checkForm() {
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
-            const btn = document.getElementById('orderBtn');
-            btn.disabled = !(cart.length > 0 && name && phone);
+            document.getElementById('orderBtn').disabled = !(cart.length > 0 && name && phone);
         }
         
         function sendOrder() {
@@ -1003,108 +929,48 @@
                 total: Math.round(total)
             };
             
+            // Отправка в MAX
             if (WebApp) {
-                WebApp.sendData(JSON.stringify(order));
+                try {
+                    WebApp.sendData(JSON.stringify(order));
+                    
+                    // Показываем сообщение об успехе
+                    const msg = document.getElementById('successMessage');
+                    msg.style.display = 'block';
+                    
+                    // Очищаем корзину и форму
+                    cart = [];
+                    updateCart();
+                    document.getElementById('name').value = '';
+                    document.getElementById('phone').value = '';
+                    checkForm();
+                    
+                    // Скрываем сообщение через 3 секунды
+                    setTimeout(() => {
+                        msg.style.display = 'none';
+                    }, 3000);
+                    
+                } catch (e) {
+                    alert('Ошибка отправки: ' + e.message);
+                }
+            } else {
+                // Режим разработки
+                console.log('Заказ (режим разработки):', order);
+                alert('Заказ сформирован (проверьте консоль)\n\n' + JSON.stringify(order, null, 2));
                 
-                const msg = document.getElementById('successMessage');
-                msg.style.display = 'flex';
-                setTimeout(() => msg.style.display = 'none', 3000);
-                
+                // Для тестирования очищаем
                 cart = [];
                 updateCart();
                 document.getElementById('name').value = '';
                 document.getElementById('phone').value = '';
                 checkForm();
-            } else {
-                alert(JSON.stringify(order, null, 2));
             }
         }
         
-        function setupEventListeners() {
-            // Табы
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabName = this.dataset.tab;
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    document.getElementById('tab-' + tabName).classList.add('active');
-                });
-            });
-            
-            // Селекты
-            document.getElementById('wf_materialTrigger').addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.getElementById('wf_materialSelect').classList.toggle('open');
-            });
-            
-            document.getElementById('uv_materialTrigger').addEventListener('click', (e) => {
-                e.stopPropagation();
-                document.getElementById('uv_materialSelect').classList.toggle('open');
-            });
-            
-            // Закрытие селектов
-            document.addEventListener('click', () => {
-                document.getElementById('wf_materialSelect')?.classList.remove('open');
-                document.getElementById('uv_materialSelect')?.classList.remove('open');
-            });
-            
-            // Инкремент/декремент
-            document.querySelectorAll('.increment').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const target = document.getElementById(this.dataset.target);
-                    const max = parseFloat(target.max) || Infinity;
-                    const step = parseFloat(target.step) || 1;
-                    target.value = Math.min(parseFloat(target.value) + step, max);
-                    
-                    const type = this.dataset.target.split('_')[0];
-                    calculatePrice(type);
-                });
-            });
-            
-            document.querySelectorAll('.decrement').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const target = document.getElementById(this.dataset.target);
-                    const min = parseFloat(target.min) || 0;
-                    const step = parseFloat(target.step) || 1;
-                    target.value = Math.max(parseFloat(target.value) - step, min);
-                    
-                    const type = this.dataset.target.split('_')[0];
-                    calculatePrice(type);
-                });
-            });
-            
-            // Инпуты
-            ['wf_width', 'wf_height', 'wf_qty', 'uv_width', 'uv_height', 'uv_qty'].forEach(id => {
-                document.getElementById(id).addEventListener('input', function() {
-                    const type = id.split('_')[0];
-                    calculatePrice(type);
-                });
-            });
-            
-            // Кнопки добавления
-            document.getElementById('wf_addBtn').addEventListener('click', () => addToCart('wf'));
-            document.getElementById('uv_addBtn').addEventListener('click', () => addToCart('uv'));
-            
-            // Корзина
-            document.getElementById('cartHeader').addEventListener('click', function() {
-                document.getElementById('cartContent').classList.toggle('open');
-                document.getElementById('cartArrow').classList.toggle('open');
-            });
-            
-            // Поля формы
-            document.getElementById('name').addEventListener('input', checkForm);
-            document.getElementById('phone').addEventListener('input', function(e) {
-                formatPhone(this);
-                checkForm();
-            });
-            
-            // Кнопка заказа
-            document.getElementById('orderBtn').addEventListener('click', sendOrder);
+        function toggleCart() {
+            document.getElementById('cartContent').classList.toggle('open');
+            document.getElementById('cartArrow').classList.toggle('open');
         }
-        
-        // Старт
-        window.onload = init;
     </script>
 </body>
 </html>
