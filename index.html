@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Калькулятор печати</title>
-    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         
         body {
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            background: #ffffff;
             padding: 16px;
-            min-height: 100vh;
         }
         
         .container {
@@ -27,24 +24,22 @@
         
         h1 {
             font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--tg-theme-text-color, #000000);
+            margin-bottom: 4px;
         }
         
         .subtitle {
             font-size: 14px;
-            color: var(--tg-theme-hint-color, #999999);
+            color: #666;
             margin-bottom: 20px;
         }
         
         .tabs {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            background: #f0f0f0;
             padding: 4px;
             border-radius: 10px;
+            margin-bottom: 16px;
         }
         
         .tab {
@@ -53,15 +48,14 @@
             padding: 10px;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-            color: var(--tg-theme-hint-color, #999999);
+            background: transparent;
+            color: #666;
         }
         
         .tab.active {
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: white;
+            color: black;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .tab-content {
@@ -73,7 +67,7 @@
         }
         
         .card {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            background: #f5f5f5;
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 16px;
@@ -92,8 +86,8 @@
         .number-input {
             display: flex;
             align-items: center;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            background: white;
+            border: 1px solid #ddd;
             border-radius: 10px;
             overflow: hidden;
         }
@@ -104,15 +98,12 @@
             border: none;
             background: transparent;
             font-size: 20px;
-            font-weight: 500;
             cursor: pointer;
-            color: var(--tg-theme-button-color, #2481cc);
-            transition: background 0.2s;
-            -webkit-tap-highlight-color: transparent;
+            color: #2481cc;
         }
         
         .number-input button:active {
-            background: rgba(0,0,0,0.05);
+            background: #f0f0f0;
         }
         
         .number-input input {
@@ -121,131 +112,704 @@
             border: none;
             text-align: center;
             font-size: 16px;
-            background: transparent;
-            color: var(--tg-theme-text-color, #000000);
-            -moz-appearance: textfield;
             outline: none;
         }
         
-        .number-input input::-webkit-outer-spin-button,
-        .number-input input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        
-        .select {
-            position: relative;
-            width: 100%;
-            margin-bottom: 16px;
-        }
-        
-        .select-trigger {
+        select {
             width: 100%;
             height: 48px;
             padding: 0 16px;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            border: 1px solid #ddd;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
             font-size: 15px;
-            color: var(--tg-theme-text-color, #000000);
-        }
-        
-        .select-trigger::after {
-            content: '▼';
-            font-size: 12px;
-            color: var(--tg-theme-hint-color, #999999);
-            transition: transform 0.2s;
-        }
-        
-        .select.open .select-trigger::after {
-            transform: rotate(180deg);
-        }
-        
-        .select-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
-            border-radius: 10px;
-            margin-top: 4px;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        .select.open .select-options {
-            display: block;
-        }
-        
-        .option {
-            padding: 12px 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 14px;
-        }
-        
-        .option:hover {
-            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
-        }
-        
-        .option.selected {
-            background: var(--tg-theme-button-color, #2481cc);
-            color: white;
+            background: white;
+            margin-bottom: 16px;
         }
         
         .services-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 12px;
+            margin: 16px 0;
         }
         
-        .service-switch {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: var(--tg-theme-bg-color, #ffffff);
-            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+        .service-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
             border-radius: 20px;
+            background: white;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            font-size: 13px;
         }
         
-        .service-switch.active {
-            background: var(--tg-theme-button-color, #2481cc);
-            border-color: var(--tg-theme-button-color, #2481cc);
+        .service-btn.active {
+            background: #2481cc;
             color: white;
-        }
-        
-        .service-switch input {
-            display: none;
+            border-color: #2481cc;
         }
         
         .sum-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-top: 20px;
+            align-items: center;
+            margin-top: 16px;
         }
         
         .current-sum {
             font-size: 28px;
             font-weight: 600;
-            color: var(--tg-theme-text-color, #000000);
         }
         
         .button {
             padding: 12px 24px;
-            background: var(--tg-theme-button-color, #2481cc);
+            background: #2481cc;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        
+        .button:active {
+            opacity: 0.8;
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        
+        .button-large {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+        }
+        
+        .history-section {
+            background: #f5f5f5;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .history-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .history-total {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .discount-badge {
+            background: #e53e3e;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .history-arrow {
+            transition: transform 0.3s;
+        }
+        
+        .history-arrow.open {
+            transform: rotate(180deg);
+        }
+        
+        .history-content {
+            display: none;
+            padding: 16px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .history-content.open {
+            display: block;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .cart-item-info {
+            flex: 1;
+            margin: 0 10px;
+            font-size: 13px;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .cart-item-actions button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 6px;
+        }
+        
+        .cart-item-actions button:hover {
+            background: #f0f0f0;
+        }
+        
+        .field {
+            margin-bottom: 16px;
+        }
+        
+        .field input {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .field input:focus {
+            border-color: #2481cc;
+        }
+        
+        .total-block {
+            background: #f5f5f5;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .total-amount {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2481cc;
+        }
+        
+        .alert {
+            background: #d4edda;
+            color: #155724;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 16px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Калькулятор печати</h1>
+        <div class="subtitle">Широкоформатная и УФ-печать</div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('wf')">Широкоформатная</div>
+            <div class="tab" onclick="switchTab('uv')">УФ-печать</div>
+        </div>
+        
+        <!-- Таб 1 -->
+        <div class="tab-content active" id="tab-wf">
+            <div class="card">
+                <div class="input-row">
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="changeValue('wf_width', -10)">−</button>
+                            <input type="number" id="wf_width" value="1000" min="100" max="3500" step="10" oninput="calcWf()">
+                            <button onclick="changeValue('wf_width', 10)">+</button>
+                        </div>
+                        <div class="subtitle">Ширина (мм)</div>
+                    </div>
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="changeValue('wf_height', -10)">−</button>
+                            <input type="number" id="wf_height" value="1000" min="100" max="3500" step="10" oninput="calcWf()">
+                            <button onclick="changeValue('wf_height', 10)">+</button>
+                        </div>
+                        <div class="subtitle">Высота (мм)</div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="changeValue('wf_qty', -1)">−</button>
+                            <input type="number" id="wf_qty" value="1" min="1" max="1000" step="1" oninput="calcWf()">
+                            <button onclick="changeValue('wf_qty', 1)">+</button>
+                        </div>
+                        <div class="subtitle">Тираж</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <select id="wf_material" onchange="calcWf()">
+                    <option value="620">Баннер FrontLit (Европа) 440 гр - 620 ₽/м²</option>
+                    <option value="560">Баннер литой (Китай) 440 гр - 560 ₽/м²</option>
+                    <option value="740">Плёнка самоклеющаяся Orajet - 740 ₽/м²</option>
+                    <option value="640">Плёнка самоклеющаяся (Китай) - 640 ₽/м²</option>
+                    <option value="1400">BlackOut - 1400 ₽/м²</option>
+                    <option value="1200">BackLit - 1200 ₽/м²</option>
+                    <option value="680">Сетка фасадная - 680 ₽/м²</option>
+                    <option value="640">Бумага постерная - 640 ₽/м²</option>
+                </select>
+                
+                <div class="services-grid" id="wf_services">
+                    <button class="service-btn" data-price="50" data-unit="percent" onclick="toggleService(this, 'wf')">Интерьерная печать +50%</button>
+                    <button class="service-btn" data-price="150" data-unit="meter" onclick="toggleService(this, 'wf')">Люверсы 150 ₽/м</button>
+                    <button class="service-btn" data-price="150" data-unit="sqm" onclick="toggleService(this, 'wf')">Ламинация 150 ₽/м²</button>
+                </div>
+                
+                <div class="sum-row">
+                    <span class="current-sum" id="wf_sum">0 ₽</span>
+                    <button class="button" onclick="addToCart('wf')">Добавить</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Таб 2 -->
+        <div class="tab-content" id="tab-uv">
+            <div class="card">
+                <div class="input-row">
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="changeValue('uv_width', -10)">−</button>
+                            <input type="number" id="uv_width" value="400" min="100" max="3500" step="10" oninput="calcUv()">
+                            <button onclick="changeValue('uv_width', 10)">+</button>
+                        </div>
+                        <div class="subtitle">Ширина (мм)</div>
+                    </div>
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="changeValue('uv_height', -10)">−</button>
+                            <input type="number" id="uv_height" value="600" min="100" max="3500" step="10" oninput="calcUv()">
+                            <button onclick="changeValue('uv_height', 10)">+</button>
+                        </div>
+                        <div class="subtitle">Высота (мм)</div>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="changeValue('uv_qty', -1)">−</button>
+                            <input type="number" id="uv_qty" value="1" min="1" max="1000" step="1" oninput="calcUv()">
+                            <button onclick="changeValue('uv_qty', 1)">+</button>
+                        </div>
+                        <div class="subtitle">Тираж</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <select id="uv_material" onchange="calcUv()">
+                    <option value="3600">Пластик ПВХ 3мм - 3600 ₽/м²</option>
+                    <option value="5800">Пластик ПВХ 5мм - 5800 ₽/м²</option>
+                    <option value="2600">Печать на пленке - 2600 ₽/м²</option>
+                    <option value="3600">Печать на пленке прозрачной - 3600 ₽/м²</option>
+                </select>
+                
+                <div class="services-grid" id="uv_services">
+                    <button class="service-btn" data-price="600" data-unit="piece" onclick="toggleService(this, 'uv')">Белый цвет +600 ₽</button>
+                    <button class="service-btn" data-price="400" data-unit="piece" onclick="toggleService(this, 'uv')">Лак +400 ₽</button>
+                </div>
+                
+                <div class="sum-row">
+                    <span class="current-sum" id="uv_sum">0 ₽</span>
+                    <button class="button" onclick="addToCart('uv')">Добавить</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Корзина -->
+        <div class="history-section">
+            <div class="history-header" onclick="toggleCart()">
+                <div>
+                    <span class="history-total" id="cart_total">0 ₽</span>
+                    <span class="discount-badge" id="discount_badge" style="display:none;">-10%</span>
+                </div>
+                <span class="history-arrow" id="cart_arrow">▼</span>
+            </div>
+            <div class="history-content" id="cart_content">
+                <div id="cart_items"></div>
+            </div>
+        </div>
+        
+        <!-- Итого -->
+        <div class="total-block">
+            <span>Итого к оплате:</span>
+            <span class="total-amount" id="final_total">0 ₽</span>
+        </div>
+        
+        <!-- Форма -->
+        <div class="card">
+            <div class="field">
+                <input type="text" id="name" placeholder="Ваше имя *" oninput="checkForm()">
+            </div>
+            <div class="field">
+                <input type="tel" id="phone" placeholder="+7 (___) ___-__-__ *" oninput="formatPhone(this); checkForm()">
+            </div>
+            <button class="button button-large" id="order_btn" disabled onclick="sendOrder()">Отправить заказ</button>
+            <div class="alert" id="success_message">✓ Заказ отправлен! Проверьте чат с ботом.</div>
+        </div>
+    </div>
+
+    <script>
+        // MAX Bridge
+        let WebApp = null;
+        try {
+            if (window.TelegramWebApp) {
+                WebApp = window.TelegramWebApp;
+                WebApp.ready();
+                WebApp.expand();
+            }
+        } catch (e) {}
+
+        // Корзина
+        let cart = [];
+        let editMode = false;
+        let editId = null;
+
+        // Переключение табов
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+
+        // Изменение значений
+        function changeValue(id, delta) {
+            let input = document.getElementById(id);
+            let val = parseFloat(input.value) || 0;
+            val += delta;
+            let min = parseFloat(input.min) || 0;
+            let max = parseFloat(input.max) || Infinity;
+            if (val < min) val = min;
+            if (val > max) val = max;
+            input.value = val;
+            
+            if (id.startsWith('wf')) calcWf();
+            else calcUv();
+        }
+
+        // Расчет широкоформатной
+        function calcWf() {
+            let width = parseFloat(document.getElementById('wf_width').value) || 0;
+            let height = parseFloat(document.getElementById('wf_height').value) || 0;
+            let qty = parseFloat(document.getElementById('wf_qty').value) || 1;
+            let materialPrice = parseFloat(document.getElementById('wf_material').value) || 0;
+            
+            let area = (width * height) / 1000000;
+            let total = materialPrice * area * qty;
+            
+            // Услуги
+            document.querySelectorAll('#wf_services .service-btn.active').forEach(btn => {
+                let price = parseFloat(btn.dataset.price) || 0;
+                let unit = btn.dataset.unit;
+                
+                if (unit === 'percent') {
+                    total += total * price / 100;
+                } else if (unit === 'sqm') {
+                    total += price * area * qty;
+                } else if (unit === 'meter') {
+                    total += price * (2 * (width + height) / 1000) * qty;
+                }
+            });
+            
+            document.getElementById('wf_sum').innerText = Math.round(total) + ' ₽';
+        }
+
+        // Расчет УФ
+        function calcUv() {
+            let width = parseFloat(document.getElementById('uv_width').value) || 0;
+            let height = parseFloat(document.getElementById('uv_height').value) || 0;
+            let qty = parseFloat(document.getElementById('uv_qty').value) || 1;
+            let materialPrice = parseFloat(document.getElementById('uv_material').value) || 0;
+            
+            let area = (width * height) / 1000000;
+            let total = materialPrice * area * qty;
+            
+            // Услуги
+            document.querySelectorAll('#uv_services .service-btn.active').forEach(btn => {
+                let price = parseFloat(btn.dataset.price) || 0;
+                total += price * qty;
+            });
+            
+            document.getElementById('uv_sum').innerText = Math.round(total) + ' ₽';
+        }
+
+        // Переключение услуг
+        function toggleService(btn) {
+            btn.classList.toggle('active');
+            if (btn.closest('#wf_services')) calcWf();
+            else calcUv();
+        }
+
+        // Добавление в корзину
+        function addToCart(type) {
+            let width = document.getElementById(type + '_width').value;
+            let height = document.getElementById(type + '_height').value;
+            let qty = document.getElementById(type + '_qty').value;
+            let materialSelect = document.getElementById(type + '_material');
+            let material = materialSelect.options[materialSelect.selectedIndex].text.split(' - ')[0];
+            let sum = parseFloat(document.getElementById(type + '_sum').innerText);
+            
+            // Получаем активные услуги
+            let services = [];
+            document.querySelectorAll('#' + type + '_services .service-btn.active').forEach(btn => {
+                services.push(btn.innerText.split(' ')[0]);
+            });
+            
+            let newItem = {
+                id: Date.now() + Math.random(),
+                type: type === 'wf' ? 'Широкоформатная' : 'УФ-печать',
+                size: width + 'x' + height,
+                qty: qty,
+                material: material,
+                services: services,
+                sum: sum
+            };
+            
+            if (editMode && editId) {
+                // Заменяем существующий элемент
+                let index = cart.findIndex(item => item.id == editId);
+                if (index !== -1) {
+                    newItem.id = editId;
+                    cart[index] = newItem;
+                }
+                editMode = false;
+                editId = null;
+                
+                // Меняем текст кнопки обратно
+                let btn = document.getElementById(type + '_addBtn');
+                if (btn) btn.innerText = 'Добавить';
+            } else {
+                cart.push(newItem);
+            }
+            
+            updateCart();
+            
+            // Сбрасываем услуги
+            document.querySelectorAll('#' + type + '_services .service-btn.active').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Пересчитываем
+            if (type === 'wf') calcWf();
+            else calcUv();
+        }
+
+        // Удаление из корзины
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id != id);
+            updateCart();
+        }
+
+        // Редактирование
+        function editCartItem(id) {
+            let item = cart.find(i => i.id == id);
+            if (!item) return;
+            
+            let type = item.type === 'Широкоформатная' ? 'wf' : 'uv';
+            
+            // Переключаем таб
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('.tab[onclick="switchTab(\'' + type + '\')"]').classList.add('active');
+            document.getElementById('tab-' + type).classList.add('active');
+            
+            // Заполняем поля
+            let size = item.size.split('x');
+            document.getElementById(type + '_width').value = size[0];
+            document.getElementById(type + '_height').value = size[1];
+            document.getElementById(type + '_qty').value = item.qty;
+            
+            // Выбираем материал
+            let select = document.getElementById(type + '_material');
+            for(let i = 0; i < select.options.length; i++) {
+                if(select.options[i].text.startsWith(item.material)) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
+            
+            // Снимаем все услуги
+            document.querySelectorAll('#' + type + '_services .service-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Активируем услуги из редактируемого элемента
+            if (item.services && item.services.length > 0) {
+                document.querySelectorAll('#' + type + '_services .service-btn').forEach(btn => {
+                    let btnText = btn.innerText.split(' ')[0];
+                    if (item.services.includes(btnText)) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            
+            // Пересчитываем
+            if (type === 'wf') calcWf();
+            else calcUv();
+            
+            // Включаем режим редактирования
+            editMode = true;
+            editId = id;
+            
+            // Меняем текст кнопки
+            let addBtn = document.querySelector('#tab-' + type + ' .sum-row .button');
+            if (addBtn) {
+                addBtn.innerText = 'Сохранить';
+            }
+        }
+
+        // Обновление корзины
+        function updateCart() {
+            let container = document.getElementById('cart_items');
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Нет добавленных расчетов</div>';
+                document.getElementById('cart_total').innerText = '0 ₽';
+                document.getElementById('final_total').innerText = '0 ₽';
+                document.getElementById('discount_badge').style.display = 'none';
+                checkForm();
+                
+                // Сбрасываем режим редактирования
+                editMode = false;
+                editId = null;
+                
+                // Возвращаем текст кнопок
+                document.querySelectorAll('.sum-row .button').forEach(btn => {
+                    btn.innerText = 'Добавить';
+                });
+                return;
+            }
+            
+            let total = 0;
+            let html = '';
+            
+            cart.forEach(item => {
+                total += item.sum;
+                html += '<div class="cart-item">' +
+                    '<span style="font-weight:600; min-width:40px;">' + item.qty + ' шт</span>' +
+                    '<span class="cart-item-info">' + item.material + '<br><small>' + item.size + ' мм</small></span>' +
+                    '<span style="font-weight:600; margin-right:10px;">' + Math.round(item.sum) + ' ₽</span>' +
+                    '<div class="cart-item-actions">' +
+                        '<button onclick="editCartItem(\'' + item.id + '\')">✏️</button>' +
+                        '<button onclick="removeFromCart(\'' + item.id + '\')">🗑️</button>' +
+                    '</div>' +
+                '</div>';
+            });
+            
+            container.innerHTML = html;
+            
+            // Скидка
+            let finalTotal = total;
+            if (total >= 50000) {
+                finalTotal = total * 0.9;
+                document.getElementById('discount_badge').style.display = 'inline-block';
+            } else {
+                document.getElementById('discount_badge').style.display = 'none';
+            }
+            
+            document.getElementById('cart_total').innerText = Math.round(total) + ' ₽';
+            document.getElementById('final_total').innerText = Math.round(finalTotal) + ' ₽';
+            checkForm();
+        }
+
+        // Формат телефона
+        function formatPhone(input) {
+            let val = input.value.replace(/\D/g, '');
+            if (val.length > 11) val = val.slice(0, 11);
+            if (val.startsWith('7') || val.startsWith('8')) val = val.slice(1);
+            
+            let formatted = '+7 ';
+            if (val.length > 0) {
+                formatted += '(' + val.slice(0, 3);
+                if (val.length > 3) {
+                    formatted += ') ' + val.slice(3, 6);
+                    if (val.length > 6) {
+                        formatted += '-' + val.slice(6, 8);
+                        if (val.length > 8) {
+                            formatted += '-' + val.slice(8, 10);
+                        }
+                    }
+                }
+            }
+            input.value = formatted;
+        }
+
+        // Проверка формы
+        function checkForm() {
+            let name = document.getElementById('name').value.trim();
+            let phone = document.getElementById('phone').value.trim();
+            let btn = document.getElementById('order_btn');
+            btn.disabled = !(cart.length > 0 && name && phone);
+        }
+
+        // Отправка заказа
+        function sendOrder() {
+            let name = document.getElementById('name').value.trim();
+            let phone = document.getElementById('phone').value.trim();
+            
+            if (!name || !phone || cart.length === 0) return;
+            
+            let total = cart.reduce((s, i) => s + i.sum, 0);
+            if (total >= 50000) total = total * 0.9;
+            
+            let order = {
+                name: name,
+                phone: phone,
+                items: cart.map(i => ({
+                    type: i.type,
+                    size: i.size + ' мм',
+                    quantity: i.qty,
+                    material: i.material,
+                    sum: Math.round(i.sum)
+                })),
+                total: Math.round(total)
+            };
+            
+            if (WebApp) {
+                WebApp.sendData(JSON.stringify(order));
+                
+                let msg = document.getElementById('success_message');
+                msg.style.display = 'flex';
+                setTimeout(() => msg.style.display = 'none', 3000);
+                
+                cart = [];
+                updateCart();
+                document.getElementById('name').value = '';
+                document.getElementById('phone').value = '';
+                checkForm();
+            } else {
+                alert(JSON.stringify(order, null, 2));
+            }
+        }
+
+        // Корзина сворачивание
+        function toggleCart() {
+            document.getElementById('cart_content').classList.toggle('open');
+            document.getElementById('cart_arrow').classList.toggle('open');
+        }
+
+        // Инициализация
+        window.onload = function() {
+            calcWf();
+            calcUv();
+        };
+    </script>
+</body>
+</html>
