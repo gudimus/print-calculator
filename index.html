@@ -14,8 +14,8 @@
         }
         
         body {
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            background: #ffffff;
+            color: #000000;
             padding: 12px;
             min-height: 100vh;
         }
@@ -121,77 +121,27 @@
             outline: none;
         }
         
-        .select {
-            position: relative;
-            width: 100%;
-            margin-bottom: 16px;
-        }
-        
-        .select-trigger {
+        select {
             width: 100%;
             height: 48px;
             padding: 0 16px;
             background: #ffffff;
             border: 1px solid #ddd;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-        
-        .select-trigger::after {
-            content: '▼';
-            font-size: 12px;
-            color: #999;
-        }
-        
-        .select-options {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            margin-top: 4px;
-            max-height: 250px;
-            overflow-y: auto;
-            z-index: 1000;
-        }
-        
-        .select.open .select-options {
-            display: block;
-        }
-        
-        .option {
-            padding: 12px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .option:last-child {
-            border-bottom: none;
-        }
-        
-        .option.selected {
-            background: #2481cc;
-            color: white;
+            font-size: 15px;
+            margin-bottom: 16px;
         }
         
         .services-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-top: 12px;
+            margin: 16px 0;
             min-height: 50px;
         }
         
-        .service-switch {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 12px;
+        .service-btn {
+            padding: 8px 16px;
             background: #ffffff;
             border: 1px solid #ddd;
             border-radius: 20px;
@@ -199,19 +149,13 @@
             font-size: 13px;
         }
         
-        .service-switch.active {
+        .service-btn.active {
             background: #2481cc;
             color: white;
             border-color: #2481cc;
         }
         
-        .service-switch input {
-            display: none;
-        }
-        
-        .service-switch.disabled {
-            opacity: 0.5;
-            pointer-events: none;
+        .service-btn.disabled {
             display: none;
         }
         
@@ -377,6 +321,10 @@
             margin-top: 16px;
             display: none;
         }
+        
+        #successMessage {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -385,8 +333,8 @@
         <div class="subtitle">Широкоформатная и УФ-печать</div>
         
         <div class="tabs">
-            <div class="tab active" data-tab="wf">Широкоформатная</div>
-            <div class="tab" data-tab="uv">УФ-печать</div>
+            <div class="tab active" onclick="switchTab('wf')">Широкоформатная</div>
+            <div class="tab" onclick="switchTab('uv')">УФ-печать</div>
         </div>
         
         <!-- Таб 1: Широкоформатная -->
@@ -396,7 +344,7 @@
                     <div class="input-col">
                         <div class="number-input">
                             <button onclick="changeValue('wf_width', -10)">−</button>
-                            <input type="number" id="wf_width" value="1000" min="100" max="3500" step="10" oninput="calculatePrice('wf')">
+                            <input type="number" id="wf_width" value="1000" min="100" max="3500" step="10" oninput="calculateWf()">
                             <button onclick="changeValue('wf_width', 10)">+</button>
                         </div>
                         <div class="subtitle">Ширина (мм)</div>
@@ -404,7 +352,7 @@
                     <div class="input-col">
                         <div class="number-input">
                             <button onclick="changeValue('wf_height', -10)">−</button>
-                            <input type="number" id="wf_height" value="1000" min="100" max="3500" step="10" oninput="calculatePrice('wf')">
+                            <input type="number" id="wf_height" value="1000" min="100" max="3500" step="10" oninput="calculateWf()">
                             <button onclick="changeValue('wf_height', 10)">+</button>
                         </div>
                         <div class="subtitle">Высота (мм)</div>
@@ -414,7 +362,7 @@
                     <div class="input-col">
                         <div class="number-input">
                             <button onclick="changeValue('wf_qty', -1)">−</button>
-                            <input type="number" id="wf_qty" value="1" min="1" max="1000" step="1" oninput="calculatePrice('wf')">
+                            <input type="number" id="wf_qty" value="1" min="1" max="1000" step="1" oninput="calculateWf()">
                             <button onclick="changeValue('wf_qty', 1)">+</button>
                         </div>
                         <div class="subtitle">Тираж</div>
@@ -423,18 +371,26 @@
             </div>
             
             <div class="card">
-                <div class="select" id="wf_materialSelect">
-                    <div class="select-trigger" onclick="toggleSelect('wf')">
-                        <span id="wf_selectedMaterial">Загрузка...</span>
-                    </div>
-                    <div class="select-options" id="wf_materialOptions"></div>
-                </div>
+                <select id="wf_material" onchange="updateWfServices(); calculateWf();">
+                    <option value="620" data-type="banner">Баннер FrontLit (Европа) 440 гр - 620 ₽/м²</option>
+                    <option value="560" data-type="banner">Баннер литой (Китай) 440 гр - 560 ₽/м²</option>
+                    <option value="740" data-type="film">Плёнка самоклеющаяся Orajet - 740 ₽/м²</option>
+                    <option value="640" data-type="film">Плёнка самоклеющаяся (Китай) - 640 ₽/м²</option>
+                    <option value="1400" data-type="banner">BlackOut - 1400 ₽/м²</option>
+                    <option value="1200" data-type="banner">BackLit - 1200 ₽/м²</option>
+                    <option value="680" data-type="banner">Сетка фасадная - 680 ₽/м²</option>
+                    <option value="640" data-type="paper">Бумага постерная - 640 ₽/м²</option>
+                </select>
                 
-                <div class="services-grid" id="wf_services"></div>
+                <div class="services-grid" id="wf_services">
+                    <button class="service-btn" data-price="50" data-unit="percent" data-types="all" onclick="toggleService(this, 'wf')">Интерьерная печать +50%</button>
+                    <button class="service-btn" data-price="150" data-unit="meter" data-types="banner" onclick="toggleService(this, 'wf')">Люверсы 150 ₽/м</button>
+                    <button class="service-btn" data-price="150" data-unit="sqm" data-types="film,paper" onclick="toggleService(this, 'wf')">Ламинация 150 ₽/м²</button>
+                </div>
                 
                 <div class="sum-row">
                     <span class="current-sum" id="wf_sum">0 ₽</span>
-                    <button class="button" id="wf_addBtn" onclick="addToCart('wf')">Добавить</button>
+                    <button class="button" onclick="addToCart('wf')">Добавить</button>
                 </div>
             </div>
         </div>
@@ -446,7 +402,7 @@
                     <div class="input-col">
                         <div class="number-input">
                             <button onclick="changeValue('uv_width', -10)">−</button>
-                            <input type="number" id="uv_width" value="400" min="100" max="3500" step="10" oninput="calculatePrice('uv')">
+                            <input type="number" id="uv_width" value="400" min="100" max="3500" step="10" oninput="calculateUv()">
                             <button onclick="changeValue('uv_width', 10)">+</button>
                         </div>
                         <div class="subtitle">Ширина (мм)</div>
@@ -454,7 +410,7 @@
                     <div class="input-col">
                         <div class="number-input">
                             <button onclick="changeValue('uv_height', -10)">−</button>
-                            <input type="number" id="uv_height" value="600" min="100" max="3500" step="10" oninput="calculatePrice('uv')">
+                            <input type="number" id="uv_height" value="600" min="100" max="3500" step="10" oninput="calculateUv()">
                             <button onclick="changeValue('uv_height', 10)">+</button>
                         </div>
                         <div class="subtitle">Высота (мм)</div>
@@ -464,7 +420,7 @@
                     <div class="input-col">
                         <div class="number-input">
                             <button onclick="changeValue('uv_qty', -1)">−</button>
-                            <input type="number" id="uv_qty" value="1" min="1" max="1000" step="1" oninput="calculatePrice('uv')">
+                            <input type="number" id="uv_qty" value="1" min="1" max="1000" step="1" oninput="calculateUv()">
                             <button onclick="changeValue('uv_qty', 1)">+</button>
                         </div>
                         <div class="subtitle">Тираж</div>
@@ -473,18 +429,21 @@
             </div>
             
             <div class="card">
-                <div class="select" id="uv_materialSelect">
-                    <div class="select-trigger" onclick="toggleSelect('uv')">
-                        <span id="uv_selectedMaterial">Загрузка...</span>
-                    </div>
-                    <div class="select-options" id="uv_materialOptions"></div>
-                </div>
+                <select id="uv_material" onchange="updateUvServices(); calculateUv();">
+                    <option value="3600" data-type="pvc">Пластик ПВХ 3мм - 3600 ₽/м²</option>
+                    <option value="5800" data-type="pvc">Пластик ПВХ 5мм - 5800 ₽/м²</option>
+                    <option value="2600" data-type="film">Печать на пленке - 2600 ₽/м²</option>
+                    <option value="3600" data-type="film">Печать на пленке прозрачной - 3600 ₽/м²</option>
+                </select>
                 
-                <div class="services-grid" id="uv_services"></div>
+                <div class="services-grid" id="uv_services">
+                    <button class="service-btn" data-price="600" data-unit="piece" data-types="all" onclick="toggleService(this, 'uv')">Белый цвет +600 ₽</button>
+                    <button class="service-btn" data-price="400" data-unit="piece" data-types="all" onclick="toggleService(this, 'uv')">Лак +400 ₽</button>
+                </div>
                 
                 <div class="sum-row">
                     <span class="current-sum" id="uv_sum">0 ₽</span>
-                    <button class="button" id="uv_addBtn" onclick="addToCart('uv')">Добавить</button>
+                    <button class="button" onclick="addToCart('uv')">Добавить</button>
                 </div>
             </div>
         </div>
@@ -523,228 +482,145 @@
     </div>
 
     <script>
-        // MAX Bridge - исправлено для Vercel
-        let WebApp = null;
-        try {
-            if (window.TelegramWebApp) {
-                WebApp = window.TelegramWebApp;
-                WebApp.ready();
-                WebApp.expand();
-                console.log('MAX WebApp инициализирован');
-            } else {
-                console.log('Режим разработки (вне MAX)');
-            }
-        } catch (e) {
-            console.log('Ошибка инициализации MAX:', e);
-        }
+        // Определяем, запущено ли приложение в MAX
+        const isMax = window.TelegramWebApp !== undefined;
+        console.log('Режим работы:', isMax ? 'MAX' : 'Разработка');
 
-        // Данные
-        const materials = {
-            wf: [
-                { name: 'Баннер FrontLit (Европа) 440 гр', price: 620, type: 'banner' },
-                { name: 'Баннер литой (Китай) 440 гр', price: 560, type: 'banner' },
-                { name: 'Плёнка самоклеющаяся Orajet', price: 740, type: 'film' },
-                { name: 'Плёнка самоклеющаяся (Китай)', price: 640, type: 'film' },
-                { name: 'BlackOut (двухсторонний)', price: 1400, type: 'banner' },
-                { name: 'BackLit (транслюцентный)', price: 1200, type: 'banner' },
-                { name: 'Сетка фасадная', price: 680, type: 'banner' },
-                { name: 'Бумага постерная', price: 640, type: 'paper' }
-            ],
-            uv: [
-                { name: 'Пластик ПВХ 3мм', price: 3600, type: 'pvc' },
-                { name: 'Пластик ПВХ 5мм', price: 5800, type: 'pvc' },
-                { name: 'Печать на пленке', price: 2600, type: 'film' },
-                { name: 'Печать на пленке прозрачной', price: 3600, type: 'film' }
-            ]
-        };
-        
-        const services = {
-            wf: [
-                { id: 'interior', name: 'Интерьерная печать', price: 50, unit: 'percent', types: ['all'] },
-                { id: 'grommets', name: 'Люверсы', price: 150, unit: 'meter', types: ['banner'] },
-                { id: 'lamination', name: 'Ламинация', price: 150, unit: 'sqm', types: ['film', 'paper'] }
-            ],
-            uv: [
-                { id: 'white', name: 'Белый цвет', price: 600, unit: 'piece', types: ['all'] },
-                { id: 'varnish', name: 'Лак', price: 400, unit: 'piece', types: ['all'] }
-            ]
-        };
-        
-        // Состояние
+        // Корзина
         let cart = [];
         let editMode = false;
         let editId = null;
-        
-        // Инициализация
-        window.onload = function() {
-            fillMaterials('wf');
-            fillMaterials('uv');
-            fillServices('wf');
-            fillServices('uv');
-            calculatePrice('wf');
-            calculatePrice('uv');
-        };
-        
-        function fillMaterials(type) {
-            const options = document.getElementById(type + '_materialOptions');
-            options.innerHTML = '';
-            
-            materials[type].forEach((m, index) => {
-                const div = document.createElement('div');
-                div.className = 'option' + (index === 0 ? ' selected' : '');
-                div.setAttribute('data-price', m.price);
-                div.setAttribute('data-type', m.type);
-                div.setAttribute('data-name', m.name);
-                div.textContent = m.name;
-                div.onclick = function() { selectMaterial(type, this); };
-                options.appendChild(div);
-            });
-            
-            if (materials[type].length > 0) {
-                document.getElementById(type + '_selectedMaterial').textContent = materials[type][0].name;
-                updateServices(type, materials[type][0].type);
-            }
+
+        // Переключение табов
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
         }
-        
-        function fillServices(type) {
-            const container = document.getElementById(type + '_services');
-            container.innerHTML = '';
+
+        // Изменение значений
+        function changeValue(id, delta) {
+            let input = document.getElementById(id);
+            let val = parseFloat(input.value) || 0;
+            val += delta;
             
-            services[type].forEach(s => {
-                const label = document.createElement('label');
-                label.className = 'service-switch';
-                label.setAttribute('data-types', s.types.join(','));
-                
-                const input = document.createElement('input');
-                input.type = 'checkbox';
-                input.setAttribute('data-price', s.price);
-                input.setAttribute('data-unit', s.unit);
-                input.onchange = function() {
-                    if (this.checked) {
-                        label.classList.add('active');
-                    } else {
-                        label.classList.remove('active');
-                    }
-                    calculatePrice(type);
-                };
-                
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(s.name));
-                container.appendChild(label);
-            });
+            let min = parseFloat(input.min) || 0;
+            let max = parseFloat(input.max) || Infinity;
+            
+            if (val < min) val = min;
+            if (val > max) val = max;
+            
+            input.value = val;
+            
+            if (id.startsWith('wf')) calculateWf();
+            else calculateUv();
         }
-        
-        function selectMaterial(type, option) {
-            document.querySelectorAll('#' + type + '_materialOptions .option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            option.classList.add('selected');
-            document.getElementById(type + '_selectedMaterial').textContent = option.textContent;
-            document.getElementById(type + '_materialSelect').classList.remove('open');
+
+        // Расчет широкоформатной
+        function calculateWf() {
+            let width = parseFloat(document.getElementById('wf_width').value) || 0;
+            let height = parseFloat(document.getElementById('wf_height').value) || 0;
+            let qty = parseFloat(document.getElementById('wf_qty').value) || 1;
+            let select = document.getElementById('wf_material');
+            let materialPrice = parseFloat(select.value) || 0;
             
-            updateServices(type, option.dataset.type);
-            calculatePrice(type);
-        }
-        
-        function updateServices(type, materialType) {
-            const services = document.querySelectorAll('#' + type + '_services .service-switch');
-            
-            services.forEach(service => {
-                const types = service.dataset.types.split(',');
-                
-                if (types.includes('all') || types.includes(materialType)) {
-                    service.style.display = 'inline-flex';
-                    const checkbox = service.querySelector('input');
-                    if (checkbox.checked) {
-                        checkbox.checked = false;
-                        service.classList.remove('active');
-                    }
-                } else {
-                    service.style.display = 'none';
-                    const checkbox = service.querySelector('input');
-                    if (checkbox.checked) {
-                        checkbox.checked = false;
-                        service.classList.remove('active');
-                    }
-                }
-            });
-        }
-        
-        function calculatePrice(type) {
-            const width = parseFloat(document.getElementById(type + '_width').value) || 0;
-            const height = parseFloat(document.getElementById(type + '_height').value) || 0;
-            const qty = parseFloat(document.getElementById(type + '_qty').value) || 1;
-            
-            const selected = document.querySelector('#' + type + '_materialOptions .option.selected');
-            if (!selected) return;
-            
-            const materialPrice = parseFloat(selected.dataset.price) || 0;
-            const area = (width * height) / 1000000;
+            let area = (width * height) / 1000000;
             let total = materialPrice * area * qty;
             
-            document.querySelectorAll('#' + type + '_services input:checked').forEach(cb => {
-                const price = parseFloat(cb.dataset.price) || 0;
-                const unit = cb.dataset.unit;
+            // Услуги
+            document.querySelectorAll('#wf_services .service-btn.active').forEach(btn => {
+                let price = parseFloat(btn.dataset.price) || 0;
+                let unit = btn.dataset.unit;
                 
                 if (unit === 'percent') {
                     total += total * price / 100;
                 } else if (unit === 'sqm') {
                     total += price * area * qty;
                 } else if (unit === 'meter') {
-                    const perimeter = 2 * (width + height) / 1000;
-                    total += price * perimeter * qty;
-                } else {
-                    total += price * qty;
+                    total += price * (2 * (width + height) / 1000) * qty;
                 }
             });
             
-            if (type === 'uv' && total < 800) total = 800;
-            
-            document.getElementById(type + '_sum').textContent = Math.round(total) + ' ₽';
+            document.getElementById('wf_sum').innerText = Math.round(total) + ' ₽';
         }
-        
-        function changeValue(id, delta) {
-            const input = document.getElementById(id);
-            let val = parseFloat(input.value) || 0;
-            val += delta;
+
+        // Расчет УФ
+        function calculateUv() {
+            let width = parseFloat(document.getElementById('uv_width').value) || 0;
+            let height = parseFloat(document.getElementById('uv_height').value) || 0;
+            let qty = parseFloat(document.getElementById('uv_qty').value) || 1;
+            let select = document.getElementById('uv_material');
+            let materialPrice = parseFloat(select.value) || 0;
             
-            const min = parseFloat(input.min) || 0;
-            const max = parseFloat(input.max) || Infinity;
+            let area = (width * height) / 1000000;
+            let total = materialPrice * area * qty;
             
-            if (val < min) val = min;
-            if (val > max) val = max;
-            
-            input.value = val;
-            calculatePrice(id.split('_')[0]);
-        }
-        
-        function toggleSelect(type) {
-            document.getElementById(type + '_materialSelect').classList.toggle('open');
-        }
-        
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.select')) {
-                document.querySelectorAll('.select').forEach(s => s.classList.remove('open'));
-            }
-        });
-        
-        function addToCart(type) {
-            const width = document.getElementById(type + '_width').value;
-            const height = document.getElementById(type + '_height').value;
-            const qty = document.getElementById(type + '_qty').value;
-            
-            const selected = document.querySelector('#' + type + '_materialOptions .option.selected');
-            if (!selected) return;
-            
-            const material = selected.dataset.name;
-            const sum = parseFloat(document.getElementById(type + '_sum').textContent);
-            
-            const selectedServices = [];
-            document.querySelectorAll('#' + type + '_services input:checked').forEach(cb => {
-                selectedServices.push(cb.parentNode.textContent.trim());
+            // Услуги
+            document.querySelectorAll('#uv_services .service-btn.active').forEach(btn => {
+                let price = parseFloat(btn.dataset.price) || 0;
+                total += price * qty;
             });
             
-            const item = {
+            // Минимальная цена для УФ
+            if (total < 800) total = 800;
+            
+            document.getElementById('uv_sum').innerText = Math.round(total) + ' ₽';
+        }
+
+        // Обновление услуг для широкоформатной
+        function updateWfServices() {
+            let select = document.getElementById('wf_material');
+            let materialType = select.options[select.selectedIndex].dataset.type;
+            
+            document.querySelectorAll('#wf_services .service-btn').forEach(btn => {
+                let types = btn.dataset.types.split(',');
+                
+                if (types.includes('all') || types.includes(materialType)) {
+                    btn.classList.remove('disabled');
+                } else {
+                    btn.classList.add('disabled');
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Обновление услуг для УФ
+        function updateUvServices() {
+            // Для УФ все услуги всегда доступны
+            document.querySelectorAll('#uv_services .service-btn').forEach(btn => {
+                btn.classList.remove('disabled');
+            });
+        }
+
+        // Переключение услуги
+        function toggleService(btn, type) {
+            if (btn.classList.contains('disabled')) return;
+            
+            btn.classList.toggle('active');
+            
+            if (type === 'wf') calculateWf();
+            else calculateUv();
+        }
+
+        // Добавление в корзину
+        function addToCart(type) {
+            let width = document.getElementById(type + '_width').value;
+            let height = document.getElementById(type + '_height').value;
+            let qty = document.getElementById(type + '_qty').value;
+            
+            let select = document.getElementById(type + '_material');
+            let material = select.options[select.selectedIndex].text.split(' - ')[0];
+            let sumText = document.getElementById(type + '_sum').innerText;
+            let sum = parseFloat(sumText) || 0;
+            
+            // Получаем выбранные услуги
+            let selectedServices = [];
+            document.querySelectorAll('#' + type + '_services .service-btn.active').forEach(btn => {
+                selectedServices.push(btn.innerText.split(' ')[0]);
+            });
+            
+            let item = {
                 id: Date.now() + Math.random(),
                 type: type === 'wf' ? 'Широкоформатная' : 'УФ-печать',
                 size: width + 'x' + height,
@@ -755,95 +631,111 @@
             };
             
             if (editMode && editId) {
-                const index = cart.findIndex(i => i.id == editId);
+                let index = cart.findIndex(i => i.id == editId);
                 if (index !== -1) {
                     item.id = editId;
                     cart[index] = item;
                 }
                 editMode = false;
                 editId = null;
-                document.getElementById(type + '_addBtn').textContent = 'Добавить';
+                
+                // Меняем текст кнопки обратно
+                let btn = document.querySelector('#tab-' + type + ' .sum-row .button');
+                if (btn) btn.innerText = 'Добавить';
             } else {
                 cart.push(item);
             }
             
             updateCart();
             
-            document.querySelectorAll('#' + type + '_services input:checked').forEach(cb => {
-                cb.checked = false;
-                cb.parentNode.classList.remove('active');
+            // Снимаем выделение с услуг
+            document.querySelectorAll('#' + type + '_services .service-btn.active').forEach(btn => {
+                btn.classList.remove('active');
             });
             
-            calculatePrice(type);
+            // Пересчитываем
+            if (type === 'wf') calculateWf();
+            else calculateUv();
         }
-        
+
+        // Редактирование
         function editCartItem(id) {
-            const item = cart.find(i => i.id == id);
+            let item = cart.find(i => i.id == id);
             if (!item) return;
             
-            const type = item.type === 'Широкоформатная' ? 'wf' : 'uv';
+            let type = item.type === 'Широкоформатная' ? 'wf' : 'uv';
             
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector('.tab[data-tab="' + type + '"]').classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('tab-' + type).classList.add('active');
+            // Переключаем таб
+            switchTab(type);
             
-            const size = item.size.split('x');
+            // Заполняем поля
+            let size = item.size.split('x');
             document.getElementById(type + '_width').value = size[0];
             document.getElementById(type + '_height').value = size[1];
             document.getElementById(type + '_qty').value = item.qty;
             
-            const options = document.querySelectorAll('#' + type + '_materialOptions .option');
-            options.forEach(opt => {
-                if (opt.dataset.name === item.material) {
-                    opt.classList.add('selected');
-                    document.getElementById(type + '_selectedMaterial').textContent = opt.textContent;
-                    updateServices(type, opt.dataset.type);
-                } else {
-                    opt.classList.remove('selected');
+            // Выбираем материал
+            let select = document.getElementById(type + '_material');
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].text.startsWith(item.material)) {
+                    select.selectedIndex = i;
+                    break;
                 }
+            }
+            
+            // Обновляем доступные услуги
+            if (type === 'wf') updateWfServices();
+            else updateUvServices();
+            
+            // Снимаем выделение со всех услуг
+            document.querySelectorAll('#' + type + '_services .service-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
             
+            // Выделяем услуги из редактируемого элемента
             setTimeout(() => {
-                document.querySelectorAll('#' + type + '_services .service-switch').forEach(service => {
-                    const cb = service.querySelector('input');
-                    const serviceName = service.textContent.trim();
-                    
-                    if (item.services.includes(serviceName)) {
-                        cb.checked = true;
-                        service.classList.add('active');
-                    } else {
-                        cb.checked = false;
-                        service.classList.remove('active');
+                document.querySelectorAll('#' + type + '_services .service-btn').forEach(btn => {
+                    let btnText = btn.innerText.split(' ')[0];
+                    if (item.services.includes(btnText)) {
+                        btn.classList.add('active');
                     }
                 });
-                calculatePrice(type);
+                
+                if (type === 'wf') calculateWf();
+                else calculateUv();
             }, 50);
             
+            // Включаем режим редактирования
             editMode = true;
             editId = id;
-            document.getElementById(type + '_addBtn').textContent = 'Сохранить';
+            
+            // Меняем текст кнопки
+            let addBtn = document.querySelector('#tab-' + type + ' .sum-row .button');
+            if (addBtn) addBtn.innerText = 'Сохранить';
         }
-        
+
+        // Удаление из корзины
         function removeFromCart(id) {
             cart = cart.filter(i => i.id != id);
             updateCart();
         }
-        
+
+        // Обновление корзины
         function updateCart() {
-            const container = document.getElementById('cartItems');
+            let container = document.getElementById('cartItems');
             
             if (cart.length === 0) {
                 container.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Нет добавленных расчетов</div>';
-                document.getElementById('cartTotal').textContent = '0 ₽';
-                document.getElementById('finalTotal').textContent = '0 ₽';
+                document.getElementById('cartTotal').innerText = '0 ₽';
+                document.getElementById('finalTotal').innerText = '0 ₽';
                 document.getElementById('discountBadge').style.display = 'none';
                 checkForm();
                 
+                // Сбрасываем режим редактирования
                 editMode = false;
                 editId = null;
                 document.querySelectorAll('.sum-row .button').forEach(btn => {
-                    btn.textContent = 'Добавить';
+                    btn.innerText = 'Добавить';
                 });
                 return;
             }
@@ -866,6 +758,7 @@
             
             container.innerHTML = html;
             
+            // Скидка
             let finalTotal = total;
             if (total >= 50000) {
                 finalTotal = total * 0.9;
@@ -874,11 +767,12 @@
                 document.getElementById('discountBadge').style.display = 'none';
             }
             
-            document.getElementById('cartTotal').textContent = Math.round(total) + ' ₽';
-            document.getElementById('finalTotal').textContent = Math.round(finalTotal) + ' ₽';
+            document.getElementById('cartTotal').innerText = Math.round(total) + ' ₽';
+            document.getElementById('finalTotal').innerText = Math.round(finalTotal) + ' ₽';
             checkForm();
         }
-        
+
+        // Формат телефона
         function formatPhone(input) {
             let val = input.value.replace(/\D/g, '');
             if (val.length > 11) val = val.slice(0, 11);
@@ -899,23 +793,26 @@
             }
             input.value = formatted;
         }
-        
+
+        // Проверка формы
         function checkForm() {
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            document.getElementById('orderBtn').disabled = !(cart.length > 0 && name && phone);
+            let name = document.getElementById('name').value.trim();
+            let phone = document.getElementById('phone').value.trim();
+            let btn = document.getElementById('orderBtn');
+            btn.disabled = !(cart.length > 0 && name && phone);
         }
-        
+
+        // Отправка заказа
         function sendOrder() {
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
+            let name = document.getElementById('name').value.trim();
+            let phone = document.getElementById('phone').value.trim();
             
             if (!name || !phone || cart.length === 0) return;
             
             let total = cart.reduce((s, i) => s + i.sum, 0);
             if (total >= 50000) total = total * 0.9;
             
-            const order = {
+            let order = {
                 name: name,
                 phone: phone,
                 items: cart.map(i => ({
@@ -930,22 +827,21 @@
             };
             
             // Отправка в MAX
-            if (WebApp) {
+            if (isMax && window.TelegramWebApp) {
                 try {
-                    WebApp.sendData(JSON.stringify(order));
+                    window.TelegramWebApp.sendData(JSON.stringify(order));
                     
-                    // Показываем сообщение об успехе
-                    const msg = document.getElementById('successMessage');
+                    // Показываем сообщение
+                    let msg = document.getElementById('successMessage');
                     msg.style.display = 'block';
                     
-                    // Очищаем корзину и форму
+                    // Очищаем
                     cart = [];
                     updateCart();
                     document.getElementById('name').value = '';
                     document.getElementById('phone').value = '';
                     checkForm();
                     
-                    // Скрываем сообщение через 3 секунды
                     setTimeout(() => {
                         msg.style.display = 'none';
                     }, 3000);
@@ -955,8 +851,7 @@
                 }
             } else {
                 // Режим разработки
-                console.log('Заказ (режим разработки):', order);
-                alert('Заказ сформирован (проверьте консоль)\n\n' + JSON.stringify(order, null, 2));
+                alert('Заказ сформирован (режим разработки)\n\n' + JSON.stringify(order, null, 2));
                 
                 // Для тестирования очищаем
                 cart = [];
@@ -966,11 +861,25 @@
                 checkForm();
             }
         }
-        
+
+        // Сворачивание корзины
         function toggleCart() {
             document.getElementById('cartContent').classList.toggle('open');
             document.getElementById('cartArrow').classList.toggle('open');
         }
+
+        // Инициализация при загрузке
+        window.onload = function() {
+            // Устанавливаем начальные значения
+            updateWfServices();
+            calculateWf();
+            calculateUv();
+            
+            // Если это MAX, показываем сообщение
+            if (isMax) {
+                console.log('✅ Приложение запущено в MAX');
+            }
+        };
     </script>
 </body>
 </html>
