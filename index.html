@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Калькулятор печати</title>
+    
+    <!-- MAX UI библиотека (исправленные ссылки) -->
+    <link rel="stylesheet" href="https://unpkg.com/@vkontakte/vkui@4/dist/vkui.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 16px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 20px 0 12px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: var(--tg-theme-hint-color, #999999);
+            margin-bottom: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            padding: 4px;
+            border-radius: 10px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+        
+        .tab.active {
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .input-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .input-col {
+            flex: 1;
+        }
+        
+        .number-input {
+            display: flex;
+            align-items: center;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .number-input button {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--tg-theme-button-color, #2481cc);
+            transition: background 0.2s;
+        }
+        
+        .number-input button:active {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .number-input input {
+            flex: 1;
+            height: 44px;
+            border: none;
+            text-align: center;
+            font-size: 16px;
+            background: transparent;
+            color: var(--tg-theme-text-color, #000000);
+            -moz-appearance: textfield;
+        }
+        
+        .number-input input::-webkit-outer-spin-button,
+        .number-input input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .select {
+            position: relative;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        
+        .select-trigger {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            font-size: 15px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .select-trigger::after {
+            content: '▼';
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #999999);
+            transition: transform 0.2s;
+        }
+        
+        .select.open .select-trigger::after {
+            transform: rotate(180deg);
+        }
+        
+        .select-options {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            border-radius: 10px;
+            margin-top: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .select.open .select-options {
+            display: block;
+        }
+        
+        .option {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+        
+        .option:hover {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+        }
+        
+        .option.selected {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: white;
+        }
+        
+        .services-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .service-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            user-select: none;
+        }
+        
+        .service-switch.active {
+            background: var(--tg-theme-button-color, #2481cc);
+            border-color: var(--tg-theme-button-color, #2481cc);
+            color: white;
+        }
+        
+        .service-switch input {
+            display: none;
+        }
+        
+        .sum-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .current-sum {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .button {
+            padding: 12px 24px;
+            background: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .button:active {
+            opacity: 0.8;
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .button-secondary {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .history-section {
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .history-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+        }
+        
+        .history-total {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .history-total-sum {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .discount-badge {
+            background: var(--tg-theme-destructive-text-color, #e53e3e);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        
+        .history-arrow {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+        
+        .history-arrow.open {
+            transform: rotate(180deg);
+        }
+        
+        .history-content {
+            display: none;
+            padding: 16px;
+            border-top: 1px solid var(--tg-theme-hint-color, #dddddd);
+        }
+        
+        .history-content.open {
+            display: block;
+        }
+        
+        .calculation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .calculation-item:active {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+        }
+        
+        .calculation-item.active {
+            border-left: 3px solid var(--tg-theme-button-color, #2481cc);
+        }
+        
+        .calculation-info {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 14px;
+        }
+        
+        .calculation-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .calculation-sum {
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+        
+        .calculation-edit, .calculation-remove {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .calculation-edit {
+            color: var(--tg-theme-link-color, #0645ad);
+        }
+        
+        .calculation-remove {
+            color: var(--tg-theme-destructive-text-color, #e53e3e);
+        }
+        
+        .calculation-edit:active, .calculation-remove:active {
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .field {
+            margin-bottom: 16px;
+        }
+        
+        .field input {
+            width: 100%;
+            height: 48px;
+            padding: 0 16px;
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border: 1px solid var(--tg-theme-hint-color, #dddddd);
+            border-radius: 10px;
+            font-size: 15px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .field input::placeholder {
+            color: var(--tg-theme-hint-color, #999999);
+        }
+        
+        .dropzone {
+            border: 2px dashed var(--tg-theme-hint-color, #dddddd);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+        
+        .dropzone:active {
+            background: rgba(0,0,0,0.02);
+        }
+        
+        .dropzone-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        
+        .file-remove {
+            cursor: pointer;
+            color: var(--tg-theme-destructive-text-color, #e53e3e);
+            font-weight: bold;
+        }
+        
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+            margin: 16px 0;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 100%;
+            background: var(--tg-theme-button-color, #2481cc);
+            animation: progress 1.5s infinite ease-in-out;
+        }
+        
+        .progress.complete .progress-bar {
+            animation: none;
+            width: 100%;
+        }
+        
+        @keyframes progress {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(0); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .alert {
+            padding: 16px;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 10px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .alert button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #155724;
+        }
+        
+        .mt20 { margin-top: 20px; }
+        .mb20 { margin-bottom: 20px; }
+        .text-center { text-align: center; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Калькулятор печати</h1>
+        <div class="subtitle">Широкоформатная и УФ-печать</div>
+        
+        <div class="progress" id="loadingIndicator">
+            <div class="progress-bar"></div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="wf">Широкоформатная</div>
+            <div class="tab" data-tab="uv">УФ-печать</div>
+        </div>
+        
+        <!-- Таб 1: Широкоформатная печать -->
+        <div class="tab-content active" id="tab-wf">
+            <div class="card">
+                <div class="input-row">
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="decrementValue('wf_width')">−</button>
+                            <input type="number" id="wf_width" value="1000" min="100" max="3500" step="10">
+                            <button onclick="incrementValue('wf_width')">+</button>
+                        </div>
+                        <div class="subtitle" style="margin-top: 4px;">Ширина (мм)</div>
+                    </div>
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="decrementValue('wf_height')">−</button>
+                            <input type="number" id="wf_height" value="1000" min="100" max="3500" step="10">
+                            <button onclick="incrementValue('wf_height')">+</button>
+                        </div>
+                        <div class="subtitle" style="margin-top: 4px;">Высота (мм)</div>
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="decrementValue('wf_qty')">−</button>
+                            <input type="number" id="wf_qty" value="1" min="1" max="1000" step="1">
+                            <button onclick="incrementValue('wf_qty')">+</button>
+                        </div>
+                        <div class="subtitle" style="margin-top: 4px;">Тираж</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="select" id="wf_materialSelect">
+                    <div class="select-trigger" id="wf_materialTrigger">
+                        <span id="wf_selectedMaterial">Загрузка...</span>
+                    </div>
+                    <div class="select-options" id="wf_materialOptions"></div>
+                </div>
+                
+                <div class="services-grid" id="wf_services_list"></div>
+                
+                <div class="sum-row">
+                    <span class="current-sum" id="wf_currentSum">0 ₽</span>
+                    <button class="button" id="wf_addBtn">Добавить</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Таб 2: УФ-печать -->
+        <div class="tab-content" id="tab-uv">
+            <div class="card">
+                <div class="input-row">
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="decrementValue('uv_width')">−</button>
+                            <input type="number" id="uv_width" value="400" min="100" max="3500" step="10">
+                            <button onclick="incrementValue('uv_height')">+</button>
+                        </div>
+                        <div class="subtitle" style="margin-top: 4px;">Ширина (мм)</div>
+                    </div>
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="decrementValue('uv_height')">−</button>
+                            <input type="number" id="uv_height" value="600" min="100" max="3500" step="10">
+                            <button onclick="incrementValue('uv_height')">+</button>
+                        </div>
+                        <div class="subtitle" style="margin-top: 4px;">Высота (мм)</div>
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <div class="input-col">
+                        <div class="number-input">
+                            <button onclick="decrementValue('uv_qty')">−</button>
+                            <input type="number" id="uv_qty" value="1" min="1" max="1000" step="1">
+                            <button onclick="incrementValue('uv_qty')">+</button>
+                        </div>
+                        <div class="subtitle" style="margin-top: 4px;">Тираж</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="select" id="uv_materialSelect">
+                    <div class="select-trigger" id="uv_materialTrigger">
+                        <span id="uv_selectedMaterial">Загрузка...</span>
+                    </div>
+                    <div class="select-options" id="uv_materialOptions"></div>
+                </div>
+                
+                <div class="services-grid" id="uv_services_list"></div>
+                
+                <div class="sum-row">
+                    <span class="current-sum" id="uv_currentSum">0 ₽</span>
+                    <button class="button" id="uv_addBtn">Добавить</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- История расчетов -->
+        <div class="history-section">
+            <div class="history-header" id="historyHeader">
+                <div class="history-total">
+                    <span class="history-total-sum" id="totalSum">0 ₽</span>
+                    <span class="discount-badge" id="discountBadge" style="display:none;">-10%</span>
+                </div>
+                <span class="history-arrow" id="historyArrow">▼</span>
+            </div>
+            <div class="history-content" id="historyContent">
+                <div id="calculationsContainer"></div>
+            </div>
+        </div>
+        
+        <!-- Форма -->
+        <div class="card">
+            <div class="field">
+                <input type="text" id="name" placeholder="Ваше имя">
+            </div>
+            <div class="field">
+                <input type="tel" id="phone" placeholder="+7 (___) ___-__-__">
+            </div>
+            
+            <div class="dropzone" id="dropzone">
+                <div class="dropzone-content">
+                    <span>📎 Добавить файлы</span>
+                </div>
+                <input type="file" id="fileInput" multiple style="display: none;">
+            </div>
+            <div id="fileList"></div>
+            
+            <div class="progress" id="progress">
+                <div class="progress-bar"></div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; justify-content: space-between;">
+                <button class="button" id="orderBtn" disabled>Заказать</button>
+                <button class="button button-secondary" id="shareBtn">Поделиться</button>
+                <button class="button button-secondary" id="downloadPdfBtn" disabled>PDF</button>
+            </div>
+            
+            <div class="alert" id="success" style="display:none;">
+                <span>Заявка успешно отправлена</span>
+                <button onclick="this.parentElement.style.display='none'">✕</button>
+            </div>
+        </div>
+        
+        <div class="text-center mt20 subtitle">
+            Мини-приложение для MAX
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ MAX BRIDGE (исправленная)
+        // ============================================
+        let WebApp = null;
+        let initParams = {};
+        
+        try {
+            // Проверяем, запущено ли приложение внутри MAX
+            if (window.TelegramWebApp) {
+                WebApp = window.TelegramWebApp;
+                WebApp.ready();
+                WebApp.expand();
+                
+                initParams = {
+                    startParam: WebApp.initDataUnsafe?.start_param || null,
+                    initData: WebApp.initData || null
+                };
+                
+                console.log('✅ MAX Bridge инициализирован', initParams);
+            } else {
+                console.log('ℹ️ Приложение запущено вне MAX');
+            }
+        } catch (e) {
+            console.warn('⚠️ Ошибка инициализации MAX Bridge:', e);
+        }
+        
+        // ============================================
+        // ДАННЫЕ ПРАЙС-ЛИСТА
+        // ============================================
+        const PRICE_DATA = {
+            materials: [
+                { name: 'Баннер FrontLit (Европа) 440 гр', price: 620, type: 'banner', category: 'wide_format' },
+                { name: 'Баннер литой (Китай) 440 гр', price: 560, type: 'banner', category: 'wide_format' },
+                { name: 'Плёнка самоклеющаяся Orajet', price: 740, type: 'film', category: 'wide_format' },
+                { name: 'Плёнка самоклеющаяся (Китай)', price: 640, type: 'film', category: 'wide_format' },
+                { name: 'BlackOut (двухсторонний)', price: 1400, type: 'banner', category: 'wide_format' },
+                { name: 'BackLit (транслюцентный)', price: 1200, type: 'banner', category: 'wide_format' },
+                { name: 'Сетка фасадная', price: 680, type: 'banner', category: 'wide_format' },
+                { name: 'Плёнка перфорированная', price: 940, type: 'film', category: 'wide_format' },
+                { name: 'Полиэстр', price: 660, type: 'banner', category: 'wide_format' },
+                { name: 'Бумага (BlueBack)', price: 650, type: 'paper', category: 'wide_format' },
+                { name: 'Бумага постерная', price: 640, type: 'paper', category: 'wide_format' },
+                { name: 'Бумага скролерная', price: 1000, type: 'paper', category: 'wide_format' },
+                { name: 'Пластик ПВХ 3мм', price: 3600, type: 'pvc', category: 'uv_print' },
+                { name: 'Пластик ПВХ 5мм', price: 5800, type: 'pvc', category: 'uv_print' },
+                { name: 'Печать на пленке', price: 2600, type: 'film', category: 'uv_print' },
+                { name: 'Печать на пленке прозрачной', price: 3600, type: 'film', category: 'uv_print' },
+                { name: 'Печать шрифтом Брайля', price: 32500, type: 'other', category: 'uv_print' }
+            ],
+            
+            services: [
+                { id: 'interior', name: 'Интерьерная печать', price: 50, unit: 'percent', applies_to: 'all', category: 'wide_format' },
+                { id: 'grommets', name: 'Люверсы', price: 150, unit: 'linear_meter', applies_to: 'banner', category: 'wide_format' },
+                { id: 'pockets', name: 'Карманы', price: 100, unit: 'linear_meter', applies_to: 'banner', category: 'wide_format' },
+                { id: 'lamination', name: 'Ламинация', price: 150, unit: 'sqm', applies_to: 'film,paper', category: 'wide_format' },
+                { id: 'white', name: 'Белый цвет', price: 600, unit: 'piece', applies_to: 'all', category: 'uv_print' },
+                { id: 'varnish', name: 'Лак', price: 400, unit: 'piece', applies_to: 'all', category: 'uv_print' }
+            ],
+            
+            settings: {
+                min_price_wf: 0,
+                min_price_uv: 800,
+                discount_sum_threshold: 50000,
+                discount_sum_percent: 10,
+                discount_area_threshold: 100,
+                discount_area_percent: 5,
+                last_updated: '2024-03-16'
+            }
+        };
+        
+        // ============================================
+        // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        // ============================================
+        let files = [];
+        let calculations = [];
+        let currentCalculationId = null;
+        let editMode = false;
+        let editCalculationId = null;
+        let appliedDiscount = null;
+        
+        const MIN_PRICE_WF = PRICE_DATA.settings.min_price_wf || 0;
+        const MIN_PRICE_UV = PRICE_DATA.settings.min_price_uv || 800;
+        
+        // ============================================
+        // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+        // ============================================
+        
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        }
+        
+        function generateId() {
+            return Date.now() + Math.random() + Math.random();
+        }
+        
+        function showNotification(message, type = 'info') {
+            if (WebApp) {
+                WebApp.showPopup({
+                    title: type === 'success' ? 'Успешно' : 'Информация',
+                    message: message,
+                    buttons: [{ type: 'ok' }]
+                });
+            } else {
+                alert(message);
+            }
+        }
+        
+        // ============================================
+        // ОБРАБОТЧИКИ ДЛЯ ИНКРЕМЕНТА/ДЕКРЕМЕНТА
+        // ============================================
+        
+        function incrementValue(id) {
+            const input = document.getElementById(id);
+            if (input) {
+                const max = parseFloat(input.max) || Infinity;
+                const step = parseFloat(input.step) || 1;
+                const currentValue = parseFloat(input.value) || 0;
+                const newValue = Math.min(currentValue + step, max);
+                input.value = newValue;
+                updateCurrentSums();
+            }
+        }
+        
+        function decrementValue(id) {
+            const input = document.getElementById(id);
+            if (input) {
+                const min = parseFloat(input.min) || 0;
+                const step = parseFloat(input.step) || 1;
+                const currentValue = parseFloat(input.value) || 0;
+                const newValue = Math.max(currentValue - step, min);
+                input.value = newValue;
+                updateCurrentSums();
+            }
+        }
+        
+        // ============================================
+        // ЗАГРУЗКА ДАННЫХ
+        // ============================================
+        
+        function populateMaterialSelects() {
+            // WF материалы
+            const wfMaterials = PRICE_DATA.materials.filter(m => m.category === 'wide_format');
+            const wfOptions = document.getElementById('wf_materialOptions');
+            
+            if (wfOptions) {
+                wfOptions.innerHTML = '';
+                wfMaterials.forEach((material, index) => {
+                    const option = document.createElement('div');
+                    option.className = `option ${index === 0 ? 'selected' : ''}`;
+                    option.dataset.value = material.price;
+                    option.dataset.type = material.type || 'other';
+                    option.dataset.name = material.name;
+                    option.textContent = material.name;
+                    wfOptions.appendChild(option);
+                });
+                
+                if (wfMaterials.length > 0) {
+                    document.getElementById('wf_selectedMaterial').textContent = wfMaterials[0].name;
+                }
+            }
+            
+            // UV материалы
+            const uvMaterials = PRICE_DATA.materials.filter(m => m.category === 'uv_print');
+            const uvOptions = document.getElementById('uv_materialOptions');
+            
+            if (uvOptions) {
+                uvOptions.innerHTML = '';
+                uvMaterials.forEach((material, index) => {
+                    const option = document.createElement('div');
+                    option.className = `option ${index === 0 ? 'selected' : ''}`;
+                    option.dataset.value = material.price;
+                    option.dataset.type = material.type || 'other';
+                    option.dataset.name = material.name;
+                    option.textContent = material.name;
+                    uvOptions.appendChild(option);
+                });
+                
+                if (uvMaterials.length > 0) {
+                    document.getElementById('uv_selectedMaterial').textContent = uvMaterials[0].name;
+                }
+            }
+            
+            setupMaterialSelectHandlers();
+        }
+        
+        function populateServices() {
+            // WF услуги
+            const wfServices = PRICE_DATA.services.filter(s => s.category === 'wide_format');
+            const wfServicesList = document.getElementById('wf_services_list');
+            
+            if (wfServicesList) {
+                wfServicesList.innerHTML = '';
+                wfServices.forEach(service => {
+                    const label = document.createElement('label');
+                    label.className = 'service-switch';
+                    label.htmlFor = `wf_${service.id}`;
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `wf_${service.id}`;
+                    checkbox.dataset.serviceId = service.id;
+                    checkbox.dataset.price = service.price;
+                    checkbox.dataset.unit = service.unit;
+                    checkbox.dataset.appliesTo = service.applies_to || '';
+                    
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            label.classList.add('active');
+                        } else {
+                            label.classList.remove('active');
+                        }
+                        updateCurrentSums();
+                    });
+                    
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(service.name));
+                    wfServicesList.appendChild(label);
+                });
+            }
+            
+            // UV услуги
+            const uvServices = PRICE_DATA.services.filter(s => s.category === 'uv_print');
+            const uvServicesList = document.getElementById('uv_services_list');
+            
+            if (uvServicesList) {
+                uvServicesList.innerHTML = '';
+                uvServices.forEach(service => {
+                    const label = document.createElement('label');
+                    label.className = 'service-switch';
+                    label.htmlFor = `uv_${service.id}`;
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `uv_${service.id}`;
+                    checkbox.dataset.serviceId = service.id;
+                    checkbox.dataset.price = service.price;
+                    checkbox.dataset.unit = service.unit;
+                    checkbox.dataset.appliesTo = service.applies_to || '';
+                    
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            label.classList.add('active');
+                        } else {
+                            label.classList.remove('active');
+                        }
+                        updateCurrentSums();
+                    });
+                    
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(service.name));
+                    uvServicesList.appendChild(label);
+                });
+            }
+        }
+        
+        function setupMaterialSelectHandlers() {
+            // WF селект
+            const wfSelect = document.getElementById('wf_materialSelect');
+            const wfTrigger = document.getElementById('wf_materialTrigger');
+            
+            if (wfTrigger) {
+                wfTrigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    wfSelect.classList.toggle('open');
+                });
+            }
+            
+            document.querySelectorAll('#wf_materialSelect .option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    document.querySelectorAll('#wf_materialSelect .option').forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    document.getElementById('wf_selectedMaterial').textContent = opt.textContent;
+                    wfSelect.classList.remove('open');
+                    updateCurrentSums();
+                });
+            });
+            
+            // UV селект
+            const uvSelect = document.getElementById('uv_materialSelect');
+            const uvTrigger = document.getElementById('uv_materialTrigger');
+            
+            if (uvTrigger) {
+                uvTrigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    uvSelect.classList.toggle('open');
+                });
+            }
+            
+            document.querySelectorAll('#uv_materialSelect .option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    document.querySelectorAll('#uv_materialSelect .option').forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    document.getElementById('uv_selectedMaterial').textContent = opt.textContent;
+                    uvSelect.classList.remove('open');
+                    updateCurrentSums();
+                });
+            });
+            
+            // Закрытие селектов при клике вне
+            document.addEventListener('click', () => {
+                if (wfSelect) wfSelect.classList.remove('open');
+                if (uvSelect) uvSelect.classList.remove('open');
+            });
+        }
+        
+        // ============================================
+        // РАСЧЕТ СТОИМОСТИ
+        // ============================================
+        
+        function calculatePrice(tab) {
+            const widthInput = document.getElementById(`${tab}_width`);
+            const heightInput = document.getElementById(`${tab}_height`);
+            const qtyInput = document.getElementById(`${tab}_qty`);
+            
+            if (!widthInput || !heightInput || !qtyInput) return 0;
+            
+            const width = parseFloat(widthInput.value) || 0;
+            const height = parseFloat(heightInput.value) || 0;
+            const qty = parseFloat(qtyInput.value) || 1;
+            
+            // Получаем выбранный материал
+            const selectedOption = document.querySelector(`#${tab}_materialSelect .option.selected`);
+            if (!selectedOption) return 0;
+            
+            const materialPrice = parseFloat(selectedOption.dataset.value) || 0;
+            
+            // Площадь в м²
+            const area = (width * height) / 1000000;
+            
+            // Базовая стоимость
+            let total = materialPrice * area * qty;
+            
+            // Добавляем услуги
+            const services = document.querySelectorAll(`#${tab}_services_list input[type="checkbox"]:checked`);
+            services.forEach(service => {
+                const price = parseFloat(service.dataset.price) || 0;
+                const unit = service.dataset.unit;
+                
+                if (unit === 'percent') {
+                    total += total * price / 100;
+                } else if (unit === 'sqm') {
+                    total += price * area * qty;
+                } else if (unit === 'linear_meter') {
+                    const perimeter = 2 * (width + height) / 1000;
+                    total += price * perimeter * qty;
+                } else {
+                    total += price * qty;
+                }
+            });
+            
+            // Применяем минимальную стоимость
+            const minPrice = tab === 'wf' ? MIN_PRICE_WF : MIN_PRICE_UV;
+            return Math.max(total, minPrice);
+        }
+        
+        function updateCurrentSums() {
+            const wfSum = calculatePrice('wf');
+            const uvSum = calculatePrice('uv');
+            
+            const wfSumElement = document.getElementById('wf_currentSum');
+            const uvSumElement = document.getElementById('uv_currentSum');
+            
+            if (wfSumElement) wfSumElement.textContent = `${formatNumber(Math.round(wfSum))} ₽`;
+            if (uvSumElement) uvSumElement.textContent = `${formatNumber(Math.round(uvSum))} ₽`;
+        }
+        
+        // ============================================
+        // УПРАВЛЕНИЕ РАСЧЕТАМИ
+        // ============================================
+        
+        function addCalculation(tab) {
+            const width = document.getElementById(`${tab}_width`).value;
+            const height = document.getElementById(`${tab}_height`).value;
+            const qty = document.getElementById(`${tab}_qty`).value;
+            const materialElement = document.querySelector(`#${tab}_materialSelect .option.selected`);
+            
+            if (!materialElement) {
+                showNotification('Выберите материал');
+                return;
+            }
+            
+            const materialName = materialElement.dataset.name || materialElement.textContent;
+            const materialPrice = parseFloat(materialElement.dataset.value) || 0;
+            
+            // Собираем выбранные услуги
+            const selectedServices = [];
+            document.querySelectorAll(`#${tab}_services_list input[type="checkbox"]:checked`).forEach(service => {
+                selectedServices.push({
+                    id: service.dataset.serviceId,
+                    price: parseFloat(service.dataset.price) || 0,
+                    unit: service.dataset.unit
+                });
+            });
+            
+            const sum = calculatePrice(tab);
+            
+            const calculation = {
+                id: generateId(),
+                tab: tab,
+                width: width,
+                height: height,
+                qty: qty,
+                material: materialName,
+                materialPrice: materialPrice,
+                services: selectedServices,
+                sum: sum,
+                timestamp: new Date().toISOString()
+            };
+            
+            if (editMode && editCalculationId) {
+                // Редактирование существующего расчета
+                const index = calculations.findIndex(c => c.id === editCalculationId);
+                if (index !== -1) {
+                    calculations[index] = { ...calculation, id: editCalculationId };
+                }
+                editMode = false;
+                editCalculationId = null;
+                document.getElementById(`${tab}_addBtn`).textContent = 'Добавить';
+            } else {
+                // Добавление нового расчета
+                calculations.push(calculation);
+            }
+            
+            updateCalculationsList();
+            clearForm(tab);
+            checkButtonsState();
+            
+            showNotification('Расчет добавлен', 'success');
+        }
+        
+        function clearForm(tab) {
+            document.getElementById(`${tab}_width`).value = '1000';
+            document.getElementById(`${tab}_height`).value = '1000';
+            document.getElementById(`${tab}_qty`).value = '1';
+            
+            // Снимаем выбор с услуг
+            document.querySelectorAll(`#${tab}_services_list input[type="checkbox"]`).forEach(cb => {
+                cb.checked = false;
+                cb.closest('.service-switch')?.classList.remove('active');
+            });
+            
+            updateCurrentSums();
+        }
+        
+        function editCalculation(id) {
+            const calculation = calculations.find(c => c.id === id);
+            if (!calculation) return;
+            
+            const tab = calculation.tab;
+            
+            // Переключаем таб
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            
+            // Заполняем форму
+            document.getElementById(`${tab}_width`).value = calculation.width;
+            document.getElementById(`${tab}_height`).value = calculation.height;
+            document.getElementById(`${tab}_qty`).value = calculation.qty;
+            
+            // Выбираем материал
+            const materialOptions = document.querySelectorAll(`#${tab}_materialSelect .option`);
+            materialOptions.forEach(opt => {
+                if (opt.dataset.name === calculation.material || opt.textContent === calculation.material) {
+                    opt.classList.add('selected');
+                    document.getElementById(`${tab}_selectedMaterial`).textContent = opt.textContent;
+                } else {
+                    opt.classList.remove('selected');
+                }
+            });
+            
+            // Выбираем услуги
+            document.querySelectorAll(`#${tab}_services_list input[type="checkbox"]`).forEach(cb => {
+                const serviceInCalculation = calculation.services.find(s => s.id === cb.dataset.serviceId);
+                cb.checked = !!serviceInCalculation;
+                if (cb.checked) {
+                    cb.closest('.service-switch')?.classList.add('active');
+                } else {
+                    cb.closest('.service-switch')?.classList.remove('active');
+                }
+            });
+            
+            updateCurrentSums();
+            
+            editMode = true;
+            editCalculationId = id;
+            document.getElementById(`${tab}_addBtn`).textContent = 'Сохранить';
+        }
+        
+        function removeCalculation(id) {
+            calculations = calculations.filter(c => c.id !== id);
+            updateCalculationsList();
+            checkButtonsState();
+            
+            if (editCalculationId === id) {
+                editMode = false;
+                editCalculationId = null;
+                const activeTab = document.querySelector('.tab.active').dataset.tab;
+                document.getElementById(`${activeTab}_addBtn`).textContent = 'Добавить';
+            }
+        }
+        
+        function updateCalculationsList() {
+            const container = document.getElementById('calculationsContainer');
+            if (!container) return;
+            
+            if (calculations.length === 0) {
+                container.innerHTML = '<div class="subtitle">Нет расчетов</div>';
+                document.getElementById('totalSum').textContent = '0 ₽';
+                return;
+            }
+            
+            let totalSum = 0;
+            let html = '';
+            
+            calculations.forEach(calc => {
+                totalSum += calc.sum;
+                const isActive = calc.id === currentCalculationId;
+                
+                html += `
+                    <div class="calculation-item ${isActive ? 'active' : ''}" data-id="${calc.id}">
+                        <span class="calculation-number">${calc.qty} шт</span>
+                        <span class="calculation-info">${calc.material} (${calc.width}x${calc.height})</span>
+                        <span class="calculation-sum">${formatNumber(Math.round(calc.sum))} ₽</span>
+                        <div class="calculation-actions">
+                            <button class="calculation-edit" onclick="event.stopPropagation(); editCalculation('${calc.id}')">✏️</button>
+                            <button class="calculation-remove" onclick="event.stopPropagation(); removeCalculation('${calc.id}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Применяем скидку
+            const discountThreshold = PRICE_DATA.settings.discount_sum_threshold;
+            const discountPercent = PRICE_DATA.settings.discount_sum_percent;
+            
+            if (totalSum >= discountThreshold) {
+                const discountAmount = Math.round(totalSum * discountPercent / 100);
+                appliedDiscount = discountAmount;
+                totalSum -= discountAmount;
+                document.getElementById('discountBadge').style.display = 'inline-block';
+            } else {
+                appliedDiscount = null;
+                document.getElementById('discountBadge').style.display = 'none';
+            }
+            
+            container.innerHTML = html;
+            document.getElementById('totalSum').textContent = `${formatNumber(Math.round(totalSum))} ₽`;
+            
+            // Добавляем обработчики клика на элементы
+            document.querySelectorAll('.calculation-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    currentCalculationId = id;
+                    document.querySelectorAll('.calculation-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+        
+        function checkButtonsState() {
+            const orderBtn = document.getElementById('orderBtn');
+            const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+            
+            const hasCalculations = calculations.length > 0;
+            const hasName = document.getElementById('name').value.trim() !== '';
+            const hasPhone = document.getElementById('phone').value.trim() !== '';
+            
+            if (orderBtn) {
+                orderBtn.disabled = !(hasCalculations && hasName && hasPhone);
+            }
+            
+            if (downloadPdfBtn) {
+                downloadPdfBtn.disabled = !hasCalculations;
+            }
+        }
+        
+        // ============================================
+        // ТАБЫ
+        // ============================================
+        
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    document.getElementById(`tab-${tabName}`).classList.add('active');
+                });
+            });
+        }
+        
+        // ============================================
+        // ИСТОРИЯ
+        // ============================================
+        
+        function setupHistory() {
+            const historyHeader = document.getElementById('historyHeader');
+            const historyContent = document.getElementById('historyContent');
+            const historyArrow = document.getElementById('historyArrow');
+            
+            if (historyHeader) {
+                historyHeader.addEventListener('click', () => {
+                    historyContent.classList.toggle('open');
+                    historyArrow.classList.toggle('open');
+                });
+            }
+        }
+        
+        // ============================================
+        // ФАЙЛЫ
+        // ============================================
+        
+        function setupFileHandlers() {
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            
+            if (dropzone && fileInput) {
+                dropzone.addEventListener('click', () => {
+                    fileInput.click();
+                });
+                
+                dropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropzone.style.borderColor = 'var(--tg-theme-button-color, #2481cc)';
+                });
+                
+                dropzone.addEventListener('dragleave', () => {
+                    dropzone.style.borderColor = 'var(--tg-theme-hint-color, #dddddd)';
+                });
+                
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.style.borderColor = 'var(--tg-theme-hint-color, #dddddd)';
+                    
+                    const droppedFiles = e.dataTransfer.files;
+                    if (droppedFiles.length > 0) {
+                        handleFiles(droppedFiles);
+                    }
+                });
+                
+                fileInput.addEventListener('change', () => {
+                    if (fileInput.files.length > 0) {
+                        handleFiles(fileInput.files);
+                    }
+                });
+            }
+            
+            function handleFiles(newFiles) {
+                files = [...files, ...Array.from(newFiles)];
+                updateFileList();
+                showNotification(`Добавлено ${newFiles.length} файлов`, 'success');
+            }
+            
+            function updateFileList() {
+                if (!fileList) return;
+                
+                if (files.length === 0) {
+                    fileList.innerHTML = '';
+                    return;
+                }
+                
+                let html = '';
+                files.forEach((file, index) => {
+                    html += `
+                        <div class="file-item">
+                            <span>${file.name} (${Math.round(file.size / 1024)} КБ)</span>
+                            <span class="file-remove" onclick="removeFile(${index})">✕</span>
+                        </div>
+                    `;
+                });
+                
+                fileList.innerHTML = html;
+            }
+            
+            window.removeFile = function(index) {
+                files.splice(index, 1);
+                updateFileList();
+            };
+        }
+        
+        // ============================================
+        // МАСКА ТЕЛЕФОНА (упрощенная)
+        // ============================================
+        
+        function setupPhoneMask() {
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 0) {
+                        if (value.length > 11) value = value.slice(0, 11);
+                        
+                        let formatted = '';
+                        if (value.length > 0) {
+                            if (value.startsWith('7') || value.startsWith('8')) {
+                                formatted = '+7 ';
+                                value = value.slice(1);
+                            } else {
+                                formatted = '+7 ';
+                            }
+                            
+                            if (value.length > 0) {
+                                formatted += '(' + value.slice(0, 3);
+                                if (value.length > 3) {
+                                    formatted += ') ' + value.slice(3, 6);
+                                    if (value.length > 6) {
+                                        formatted += '-' + value.slice(6, 8);
+                                        if (value.length > 8) {
+                                            formatted += '-' + value.slice(8, 10);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        e.target.value = formatted;
+                    }
+                });
+            }
+        }
+        
+        // ============================================
+        // КНОПКИ
+        // ============================================
+        
+        function setupButtons() {
+            // Кнопка добавления расчета (WF)
+            const wfAddBtn = document.getElementById('wf_addBtn');
+            if (wfAddBtn) {
+                wfAddBtn.addEventListener('click', () => addCalculation('wf'));
+            }
+            
+            // Кнопка добавления расчета (UV)
+            const uvAddBtn = document.getElementById('uv_addBtn');
+            if (uvAddBtn) {
+                uvAddBtn.addEventListener('click', () => addCalculation('uv'));
+            }
+            
+            // Кнопка заказа
+            const orderBtn = document.getElementById('orderBtn');
+            if (orderBtn) {
+                orderBtn.addEventListener('click', () => {
+                    const name = document.getElementById('name').value;
+                    const phone = document.getElementById('phone').value;
+                    
+                    const orderData = {
+                        name: name,
+                        phone: phone,
+                        calculations: calculations,
+                        files: files.map(f => f.name),
+                        totalSum: parseFloat(document.getElementById('totalSum').textContent.replace(/[^\d]/g, '')),
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    console.log('Заказ:', orderData);
+                    
+                    // Показываем успех
+                    const alert = document.getElementById('success');
+                    if (alert) {
+                        alert.style.display = 'flex';
+                        setTimeout(() => {
+                            alert.style.display = 'none';
+                        }, 5000);
+                    }
+                    
+                    // В MAX можно отправить данные
+                    if (WebApp) {
+                        WebApp.sendData(JSON.stringify(orderData));
+                    }
+                });
+            }
+            
+            // Кнопка поделиться
+            const shareBtn = document.getElementById('shareBtn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', () => {
+                    const totalSum = document.getElementById('totalSum').textContent;
+                    const text = `Мой заказ в калькуляторе печати: ${totalSum}`;
+                    
+                    if (WebApp) {
+                        WebApp.shareMessage(text);
+                    } else {
+                        alert(text);
+                    }
+                });
+            }
+            
+            // Поля ввода для проверки состояния кнопки
+            ['name', 'phone'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', checkButtonsState);
+                }
+            });
+            
+            // Обработчики для инпутов
+            ['wf_width', 'wf_height', 'wf_qty', 'uv_width', 'uv_height', 'uv_qty'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', updateCurrentSums);
+                }
+            });
+        }
+        
+        // ============================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Показываем загрузку
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'block';
+            }
+            
+            // Загружаем данные
+            populateMaterialSelects();
+            populateServices();
+            
+            // Настраиваем обработчики
+            setupTabs();
+            setupHistory();
+            setupFileHandlers();
+            setupPhoneMask();
+            setupButtons();
+            
+            // Обновляем суммы
+            updateCurrentSums();
+            updateCalculationsList();
+            checkButtonsState();
+            
+            // Скрываем загрузку
+            setTimeout(() => {
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>
